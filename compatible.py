@@ -20,6 +20,8 @@ def to_str(str_obj):
     if _is_python_2:
         return str_obj
     else:
+        if isinstance(str_obj, str):
+            return str_obj
         return str(str_obj, encoding='utf-8')
 
 
