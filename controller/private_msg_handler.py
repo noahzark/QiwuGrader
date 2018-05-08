@@ -12,8 +12,6 @@ class pMsgHandler:
 
     robot_name = 'mimi2'
 
-    TIMEOUT_REPLY = u'服务器忙，请稍后'.encode('utf-8')
-
     def __init__(self, server_config, logger):
         self.server = server_config
         self.logging = logger
@@ -84,9 +82,6 @@ class pMsgHandler:
         # If send action doesn't have reply, wait for a reply
         if len(result) == 0:
             result = handler.wait_for_reply()
-
-        if len(result) == 0:
-            result = self.TIMEOUT_REPLY
 
         # Post process result string
         '''

@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import requests
 import time
 
@@ -7,6 +8,8 @@ __author__ = 'Feliciano'
 
 
 class ChatRobot:
+
+    ERROR_REPLY = u'好的。'.encode('utf-8')
 
     MAX_RETRY_TIMES = 5
 
@@ -83,7 +86,7 @@ class ChatRobot:
         status = -1
         result = ''
 
-        while retry<self.MAX_RETRY_TIMES and status != requests.codes.ok:
+        while retry < self.MAX_RETRY_TIMES and status != requests.codes.ok:
             status, result = self.chat(msg)
             retry += 1
 
@@ -132,6 +135,7 @@ class ChatRobot:
 
         if len(result) == 0:
             self.logging.error('Server reply time out')
+            result = self.ERROR_REPLY
 
         self.logging.info('Waited for {:.5f} seconds'.format(time.time()-query_time))
 
