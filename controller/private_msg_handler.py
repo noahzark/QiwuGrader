@@ -30,7 +30,7 @@ class pMsgHandler:
             return False
 
         if msg.startswith(u'logout'):
-            if self.tokens.has_key(from_name):
+            if from_name in self.tokens:
                 # Restart the conversation actively
                 del self.tokens[from_name]
                 self.logging.debug(from_name + ' logged out')

@@ -9,7 +9,7 @@ __author__ = 'Feliciano'
 
 class ChatRobot:
 
-    ERROR_REPLY = u'好的。'.encode('utf-8')
+    ERROR_REPLY = u'服务器通信错误。'.encode('utf-8')
 
     MAX_RETRY_TIMES = 5
 
@@ -61,7 +61,7 @@ class ChatRobot:
 
     def chat(self, msg):
         if len(self.chat_key) == 0:
-            return 'Please login first'
+            return -1, 'Please login first'
 
         chat_data = {
             'action': 'send',
@@ -70,21 +70,24 @@ class ChatRobot:
             'message': msg,
         }
 
+        result = ''
+
         r = requests.post(self.to_uri(), data=chat_data, proxies=self.proxy)
         if r.status_code == requests.codes.ok:
             if len(r.text) > 0:
-                result = r.json()
+                response = r.json()
                 if 'reply' in result:
-                    return r.status_code, result['reply'].encode('utf-8').strip()
+                    result = response['reply'].encode('utf-8').strip()
         else:
-            self.logging.warning('Send question action failed')
+            self.logging.error('Send question action failed')
+            result = self.ERROR_REPLY
 
-        return r.status_code, ''
+        return r.status_code, result
 
     def chat_with_check(self, msg):
         retry = 0
         status = -1
-        result = ''
+        result = self.ERROR_REPLY
 
         while retry < self.MAX_RETRY_TIMES and status != requests.codes.ok:
             status, result = self.chat(msg)
@@ -93,7 +96,7 @@ class ChatRobot:
         if retry == self.MAX_RETRY_TIMES:
             self.logging.error('Question send failed')
             # TODO: Make it an exception
-            result = 'Question send failed'
+            result = self.ERROR_REPLY
 
         return result
 
