@@ -11,7 +11,7 @@ __author__ = 'Feliciano'
 class SingleDialogue(BasicRequest):
 
     DEFAULT_REPLY = u'我不知道。'
-    ERROR_REPLY = u'好的。'
+    ERROR_REPLY = u'服务器通信错误。'
 
     def __init__(self, service_config):
         super(SingleDialogue, self).__init__()
