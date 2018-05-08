@@ -3,6 +3,8 @@ import requests
 from init import test_logger as logger
 from model.basic_request import BasicRequest
 
+from compatible import encode_str
+
 __author__ = 'Feliciano'
 
 
@@ -31,10 +33,11 @@ class SingleDialogue(BasicRequest):
         self.url = self.to_uri()
 
     def chat(self, data):
-        payload = self.payload % data
+        payload = encode_str(self.payload % data)
         headers = {
             'content-type': self.type
         }
+
         try:
             r = requests.post(self.url, data=payload, headers=headers, timeout=5)
             result = r.json()
@@ -42,6 +45,7 @@ class SingleDialogue(BasicRequest):
         except Exception as e:
             self.logger.exception(e)
             return SingleDialogue.ERROR_REPLY
+
         if not self.threshold:
             return result[self.answer_key]
         else:

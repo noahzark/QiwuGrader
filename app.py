@@ -10,7 +10,7 @@ from controller.config_file_handler import YamlConfigFileHandler
 
 from init import report_logger
 
-GRADER_VERSION = '1.1.3'
+GRADER_VERSION = '1.2'
 
 if __name__ == '__main__':
     report_logger.info("QiwuGrader ver {0}".format(GRADER_VERSION))

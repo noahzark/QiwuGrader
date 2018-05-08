@@ -9,6 +9,13 @@ if not _is_python_2:
     file_encoding = 'utf-8'
 
 
+def encode_str(str_obj):
+    if _is_python_2:
+        return str_obj
+    else:
+        return str_obj.encode('utf-8')
+
+
 def to_str(str_obj):
     if _is_python_2:
         return str_obj

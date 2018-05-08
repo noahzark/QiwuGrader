@@ -56,11 +56,6 @@ class BasicHandler:
     def process_chat(self, from_name, msg, skip_welcome=True, max_wait=None):
         return ''
 
-    @staticmethod
-    def replace_escape(input_text):
-        result = input_text.replace(BasicHandler.NEW_LINE_ESCAPE, '\n')
-        return result
-
     def post_chat(self, from_name, result):
         if self.replacement and len(self.replacement) > 0:
             for replace in self.replacement:
@@ -68,7 +63,7 @@ class BasicHandler:
                     res = randint(0, len(self.replacement[replace]) - 1)
                     result = self.replacement[replace][res].encode('utf-8')
 
-        return BasicHandler.replace_escape(result)
+        return result
 
     def handle_chat(self, from_name, msg, max_wait=None):
         msg_id = msg

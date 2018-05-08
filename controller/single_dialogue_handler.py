@@ -6,6 +6,8 @@ from model.single_dialogue import SingleDialogue
 
 from init import test_logger as logger
 
+from compatible import to_str
+
 
 class SingleDialogueHandler(BasicHandler):
 
@@ -29,8 +31,8 @@ class SingleDialogueHandler(BasicHandler):
             return '你好'
         # Get reply
         data = {
-            'uid': from_name.encode('utf-8'),
-            'msg': msg.encode('utf-8')
+            'uid': to_str(from_name.encode('utf-8')),
+            'msg': to_str(msg.encode('utf-8'))
         }
         result = self.handler.chat(data)
         return result.encode('utf-8')
