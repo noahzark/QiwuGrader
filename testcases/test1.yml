@@ -1,0 +1,64 @@
+# 【可选参数】 测试类型，knowledge 知识库 或 api 接口，默认为knowledge
+type: knowledge
+
+# 服务器参数
+server:
+  protocol: http # 协议
+  host: localhost # 主机地址
+  port: 80  # 端口号
+  api: /api # 接口
+  nickname: landey # 【可选参数】 昵称，默认为 landey
+  welcome: '我是小悟，很高兴跟您聊天' # 【可选参数】 欢迎词，留空不检查
+  wait_duration: 0.2 # 【可选参数】 轮询时间，默认 0.2
+  max_wait: 10 # 【可选参数】 单轮对话最大等待时长，默认 10
+  proxy: None # 【可选参数】 代理设置，留空或者 None 则直连
+
+# 【可选参数】 测试参数
+options:
+  question_interval: 2 # 提问间隔，默认为 0
+  suspend_on_error: false  # 错误中断，默认为 false
+
+# 【可选参数】 输出设置，默认全为 true
+output:
+  print_info: true  # 输出debug信息
+  print_conversation: true  # 输出完整对话
+  print_details: true  # 输出详细信息
+  print_correct_answer: false  # 强制输出正确答案（否则只有错误时才输出）
+  print_csv: true
+
+# 需要测试的用户名，使用字符串则只测单个，使用数组（-）则依次测试多个
+usernames:
+  - mimi2
+
+# 问题列表
+questions:
+  1: 你好啊
+  2: 我昨天去了朋友家
+  3: 我昨天去了哪
+  4: 张三是李四的爸爸
+  5: 李四是王五的爸爸
+  6: 王五的爷爷是谁
+  7: 张三的孙子是谁
+  8: 张三跟王五是什么关系
+
+# 正确答案列表，序号与questions一一对应，支持部分匹配（包含），多种形式匹配，单个正则表达式
+answers:
+  1: 您好，我是小悟，很高兴跟您聊天，我的记性比较好
+  2: 就是明天的前天
+  3: 昨天去了朋友家
+  4:
+    multi:
+      - 就是父亲
+      - 有点奇怪
+      - 你说是就是吧
+  5:
+    multi:
+      - 就是父亲
+      - 有点奇怪
+      - 你说是就是吧
+  6:
+    regex: '\S+是\S+的爷爷'
+  7:
+    regex: '\S+是\S+的\S+'
+  8:
+    regex: '\S+是\S+的爷爷'

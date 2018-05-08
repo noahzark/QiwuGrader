@@ -1,0 +1,52 @@
+# 测试类型
+type: api
+
+# 服务名称
+name: test3
+
+# 服务器参数
+server:
+  protocol: http
+  host: localhost
+  port: 59200
+  api: /api
+
+# 请求参数
+request:
+  payload: '{"token":"*","uid": "%(uid)s","say":"%(msg)s"}' # 请求的json串，允许 %(msg)s 和 %(uid)s 作为变量传入
+  threshold: 0.65 # 阈值，低于此值则会回答“我不知道。”。如返回结果中不存在 probability 则删除该行
+  answer: 'reply' # 用于获取回答的key，如不填默认则为reply
+
+# 后处理替换
+post-replacement:
+  我不知道。:
+    - 我什么都不知道
+    - 这个问题太难了
+
+# 注释
+comment: '这是上交会闲聊的测试'
+
+questions:
+  1: 今天天气怎样
+  2: 我上次玩了VR，你觉得它怎样？
+  3: 大灰狼和胡萝卜什么关系？
+  4: 大灰狼喜欢去森林散步
+  5: 森林里有只小白兔
+  6: 大灰狼喜欢吃小白兔
+  7: 大灰狼喜欢吃什么
+  8: 今天天不错啊
+
+answers:
+  1: 今天天气不错，你可以出去散散步
+  2: 它很酷啊
+  3: 胡萝卜有营养
+  4: 大森林是个神秘的地方
+  5: 小白兔很可爱
+  6:
+    multi:
+      - 为什么吃兔兔
+      - 兔兔这么可爱
+  7: 大灰狼喜欢吃小白兔
+  8:
+    regex:
+      '\S+不错'

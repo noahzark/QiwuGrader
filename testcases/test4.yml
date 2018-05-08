@@ -1,0 +1,24 @@
+# 测试类型
+type: api
+
+# 服务名称
+name: test4
+
+# 服务器参数
+server:
+  protocol: http
+  host: localhost
+  port: 8086
+  api: /api
+
+# 请求参数
+request:
+  type: 'application/x-www-form-urlencoded' # 请求的content-type，默认为application/json
+  payload: 'chat_key=%(uid)s&%(msg)s' # 请求的form串，允许 %(msg)s 和 %(uid)s 作为变量传入
+  answer: 'solution' # 用于获取回答的key，如不填默认则为reply
+
+questions:
+  1: xingbie=女
+
+answers:
+  1: Success!
