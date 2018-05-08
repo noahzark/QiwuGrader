@@ -1,6 +1,8 @@
 import requests
 import time
 
+from compatible import to_str
+
 __author__ = 'Feliciano'
 
 
@@ -112,7 +114,7 @@ class ChatRobot:
         else:
             self.logging.warning('Receive answer action failed')
 
-        return ''
+        return b''
 
     def wait_for_reply(self):
         query_time = time.time()
@@ -137,7 +139,9 @@ class ChatRobot:
 
     def wait_for_this_reply(self, content):
         result = self.wait_for_reply()
-        while result.find(content) == -1:
+
+        content = to_str(content)
+        while to_str(result).find(content) == -1:
             result = self.wait_for_reply()
 
         return result

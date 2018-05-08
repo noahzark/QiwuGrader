@@ -12,7 +12,6 @@ class pMsgHandler:
 
     robot_name = 'mimi2'
 
-    ERROR_REPLY = u'服务器抛出了一个问题，请稍后重试'.encode('utf-8')
     TIMEOUT_REPLY = u'服务器忙，请稍后'.encode('utf-8')
 
     def __init__(self, server_config, logger):
@@ -71,14 +70,13 @@ class pMsgHandler:
             self.logging.debug('New user {0} login with chatkey {1}'.format(from_name, chat_key))
 
             result = handler.wait_for_welcome()
-            result = to_str(result)
-            self.logging.info('Login Res: {0} Length: {1} for chatkey {2}'.format(result, str(len(result)), chat_key))
+            result_str = to_str(result)
+            self.logging.info('Login Res: {0} Length: {1} for chatkey {2}'.format(result_str, str(len(result_str)), chat_key))
 
         self.logging.debug('User ask: {0} with chatkey'.format(msg.encode('utf-8'), chat_key))
 
         if skip_first and len(result) != 0:
             time.sleep(handler.wait_duration)
-            result = ''
 
         # Send question
         result = handler.chat_with_check(msg)
