@@ -24,7 +24,7 @@ except NameError:
 
 class Grader():
 
-    ERROR_REPLY = u'服务器通信错误。'
+    ERROR_REPLY = u'服务器通信错误。'.encode('utf-8')
 
     def __init__(self):
         self.config = {}
@@ -94,7 +94,7 @@ class Grader():
                     if response.find(answer_str) != -1:
                         correct = True
             else:
-                if to_str(response) == self.ERROR_REPLY:
+                if response == self.ERROR_REPLY:
                     correct = False
 
             if correct:
