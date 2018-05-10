@@ -184,6 +184,9 @@ class Grader():
         self.print_correct_answer = configuration.get('print_correct_answer', self.print_correct_answer)
         self.print_csv = configuration.get('print_csv', self.print_csv)
 
+        if questions is None:
+            return 1
+
         report_logger.info("configuration loaded, there are {0} questions".format(len(questions)))
 
         success_count = 0

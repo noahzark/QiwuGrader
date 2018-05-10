@@ -49,25 +49,32 @@ if __name__ == '__main__':
 
         report_logger.info("Testing {0} sessions in {1} seconds, interval: {2}".format(test_session, test_length, spawn_interval))
         report_logger.info("Warming up ...")
+
+        warm_up_time = time.time()
         # Spawn threads
         while session_count < test_session:
             grader_thread = GraderThread(success_count, test_config)
             threads.append(grader_thread)
-            grader_thread.start()
-
             session_count += 1
+
+        report_logger.info("Warm up process finished in {0} seconds".format(time.time() - warm_up_time))
+
+        launch_time = time.time()
+        # Start threads
+        for grader_thread in threads:
+            grader_thread.start()
 
             # Wait for spawn interval
             sleep(spawn_interval)
 
-        report_logger.info("{0} sessions started".format(session_count))
+        report_logger.info("{0} sessions started in {1}".format(session_count, time.time() - launch_time))
 
         # Wait for all threads to finish
         for grader_thread in threads:
             grader_thread.join()
 
         report_logger.info(
-            "Result: {0} / {1} passed. Total ime: {0}".format(
+            "Result: {0} / {1} passed. Total time: {2}".format(
                 success_count.value(), session_count,
                 time.time() - process_time
             )
