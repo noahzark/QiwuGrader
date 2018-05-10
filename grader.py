@@ -43,6 +43,10 @@ class Grader():
         self.print_details = True
         self.print_correct_answer = True
 
+        self.robots = None
+        self.questions = {}
+        self.answers = {}
+
     def test_robot(self, name, questions, answers):
         if self.test_type == 'api':
             test_service = SingleDialogueHandler(self.config)
@@ -145,7 +149,7 @@ class Grader():
         report_logger.info("{0} grade: {1} / {2}\ntime: {3} avg: {4}".format(name, grade, len(questions), total_time, total_time/len(questions)))
         return grade == len(questions) and True or False
 
-    def test(self, config):
+    def init(self, config):
         assert(isinstance(config, YamlConfigFileHandler))
         self.config = config
 
@@ -167,9 +171,12 @@ class Grader():
             robots = config.get_config('name', 'Unknown')
 
         if isinstance(robots, basestring):
-            robots = [robots]
-        questions = config.get_config("questions")
-        answers = config.get_config("answers")
+            self.robots = [robots]
+        else:
+            self.robots = robots
+
+        self.questions = config.get_config("questions", self.questions)
+        self.answers = config.get_config("answers", self.answers)
 
         configuration = config.get_config("output", {
             'print_info': self.print_info,
@@ -184,18 +191,20 @@ class Grader():
         self.print_correct_answer = configuration.get('print_correct_answer', self.print_correct_answer)
         self.print_csv = configuration.get('print_csv', self.print_csv)
 
-        if questions is None:
+        if self.questions and len(self.questions) > 0:
+            report_logger.info("configuration loaded, there are {0} questions".format(len(self.questions)))
+
+    def test(self):
+        success_count = 0
+        if len(self.questions) == 0:
             return 1
 
-        report_logger.info("configuration loaded, there are {0} questions".format(len(questions)))
-
-        success_count = 0
-        for i, robot in enumerate(robots):
+        for i, robot in enumerate(self.robots):
             if self.print_info:
                 test_logger.info("Testing robot {0}".format(robot))
 
             try:
-                success_count += self.test_robot(robot, questions, answers) and 1 or 0
+                success_count += self.test_robot(robot, self.questions, self.answers) and 1 or 0
             except Exception as e:
                 test_logger.exception(e)
 
