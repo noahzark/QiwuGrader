@@ -14,6 +14,9 @@ class GraderThread(threading.Thread):
     def init(self):
         self.grader.init(self.test_config)
 
-    def run(self):
+    def grade(self):
         if self.grader.test() > 0:
             self.shared_counter.increment()
+
+    def run(self):
+        self.grade()
