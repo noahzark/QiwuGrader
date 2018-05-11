@@ -50,6 +50,9 @@ if __name__ == '__main__':
         report_logger.info("Testing {0} sessions in {1} seconds, interval: {2}".format(test_session, test_length, spawn_interval))
         report_logger.info("Warming up ...")
 
+        import pp
+        job_server = pp.Server()
+
         warm_up_time = time.time()
 
         # avoid dots to speed up

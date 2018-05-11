@@ -25,11 +25,27 @@ def func(counter):
         counter.increment()
         #counter.increment_without_lock()
 
-if __name__ == '__main__':
+
+def counter_test(session_count):
+
+    import time
     counter = SharedCounter(0)
-    procs = [Process(target=func, args=(counter,)) for i in range(10)]
 
+    print("Testing {0} sessions, interval: {1}".format(session_count, 0.01))
+    print("Warming up ...")
+
+    warm_up_time = time.time()
+    procs = [Process(target=func, args=(counter,)) for i in range(session_count)]
+    print("Warm up process finished in {0} seconds".format(time.time() - warm_up_time))
+
+    launch_time = time.time()
     for p in procs: p.start()
-    for p in procs: p.join()
+    print("{0} sessions started in {1}".format(session_count, time.time() - launch_time))
 
-    print(counter.value())
+    for p in procs: p.join()
+    print("{0} sessions finished in {1}".format(session_count, time.time() - launch_time))
+
+    return counter.value()
+
+if __name__ == '__main__':
+    print(counter_test(2000))
