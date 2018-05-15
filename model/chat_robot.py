@@ -146,11 +146,13 @@ class ChatRobot:
 
     def wait_for_this_reply(self, content):
         result = self.wait_for_reply()
-
+        result = self.wait_for_reply()
         retry = 0
-
         content = to_str(content)
-        while to_str(result).find(content) == -1\
+        if result != '服务器通信错误。' and to_str(result).find(content) == -1:
+            print("Reply welcome don't include your welcome in configure")
+            sys.exit()
+        while result == '服务器通信错误。' \
                 and retry < self.MAX_RETRY_TIMES:
             result = self.wait_for_reply()
             retry += 1
