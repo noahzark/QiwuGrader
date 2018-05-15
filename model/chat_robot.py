@@ -150,11 +150,13 @@ class ChatRobot:
         retry = 0
 
         content = to_str(content)
-        while to_str(result).find(content) == -1\
+        while to_str(result).find(content) == -1 \
                 and retry < self.MAX_RETRY_TIMES:
             result = self.wait_for_reply()
             retry += 1
-
+        if to_str(result).find(content) == -1:
+            print("System welcome does not include welcome words in your configuration!")
+            sys.exit()
         return result
 
     def wait_for_welcome(self):
