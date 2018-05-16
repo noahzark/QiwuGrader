@@ -4,8 +4,8 @@ from time import sleep
 
 import multiprocessing
 
-from grader_thread import GraderThread
-from grader_thread import GraderProcess
+from grader_multitask import GraderThread
+from grader_multitask import GraderProcess
 
 from grader import Grader
 from model.shared_counter import SharedCounter
