@@ -42,7 +42,10 @@ class GraderThread(GraderSkeleton, threading.Thread):
         while self.loop > 0:
             self.grade()
             self.loop -= 1
-            sleep(self.spawn_interval)
+
+            # only sleep when need to do next grade
+            if self.loop > 0:
+                sleep(self.spawn_interval)
 
 
 class GraderProcess(GraderSkeleton, multiprocessing.Process):
