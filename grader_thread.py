@@ -10,11 +10,12 @@ from model.shared_counter import SharedCounter
 class GraderSkeleton:
 
     def __init__(self, shared_counter, test_config, kwargs):
-        self.grader = Grader()
-
         self.shared_counter = shared_counter
         self.test_config = test_config
+
+        # how many times need to run the test
         self.loop = kwargs.get('loop', 1)
+        # how long each thread is spawned
         self.spawn_interval = kwargs.get('spawn_interval', 0)
 
     def init(self):
@@ -31,10 +32,14 @@ class GraderThread(GraderSkeleton, threading.Thread):
         super(GraderThread, self).__init__(shared_counter, test_config, kwargs)
         threading.Thread.__init__(self)
 
+        # initialize grader
+        self.grader = Grader()
+
     def init(self):
         self.grader.init(self.test_config)
 
     def grade(self):
+        # calculate result
         if self.grader.test() > 0:
             self.shared_counter.increment()
 
@@ -43,7 +48,7 @@ class GraderThread(GraderSkeleton, threading.Thread):
             self.grade()
             self.loop -= 1
 
-            # only sleep when need to do next grade
+            # only sleep when we need to do next grade
             if self.loop > 0:
                 sleep(self.spawn_interval)
 
@@ -54,9 +59,11 @@ class GraderProcess(GraderSkeleton, multiprocessing.Process):
         super(GraderProcess, self).__init__(shared_counter, test_config, kwargs)
         multiprocessing.Process.__init__(self)
 
+        # use an internal counter to reduce global success counter locks
         self.internal_counter = SharedCounter()
 
     def grade(self):
+        # warm up threads
         threads = []
 
         session_count = 0
@@ -67,15 +74,18 @@ class GraderProcess(GraderSkeleton, multiprocessing.Process):
             threads.append(grader_thread)
             session_count += 1
 
+        # do real grade
         for grader_thread in threads:
             grader_thread.start()
 
-            # Wait for spawn interval
+            # wait for spawn interval
             sleep(self.spawn_interval)
 
+        # wait for threads
         for grader_thread in threads:
             grader_thread.join()
 
+        # calculate success count in the end
         self.shared_counter.increment(self.internal_counter.value())
 
     def run(self):
