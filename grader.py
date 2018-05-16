@@ -135,7 +135,7 @@ class Grader():
                             test_logger.info("Answer: " + response)
                 elif not correct:
                     test_logger.warning("Q {0} Wrong answer: {1}".format(i, response))
-                    print ("Q {0} Wrong answer: {1}".format(i, response))
+                    # print ("Q {0} Wrong answer: {1}".format(i, response))
 
             if not correct and self.suspend_on_error:
                 break
