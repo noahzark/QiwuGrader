@@ -64,7 +64,7 @@ if __name__ == '__main__':
             Handler_Class = GraderThread
 
             # use process to speed up grade
-            if spawn_interval < 0.1 and test_session >= 10000:
+            if test_session > 1000 and spawn_interval < 0.1:
                 use_process = True
                 handler_count = multiprocessing.cpu_count()
                 session_per_handler = test_session / handler_count
@@ -92,19 +92,19 @@ if __name__ == '__main__':
             warm_up_time = time.time()
             # Spawn threads
             while session_count < handler_count:
-                grader_thread = Handler_Class(success_count, test_config,
-                                              loop=session_per_handler, spawn_interval=spawn_interval * handler_count)
-                grader_thread.init()
+                grader_handler = Handler_Class(success_count, test_config,
+                                               loop=session_per_handler, spawn_interval=spawn_interval * handler_count)
+                grader_handler.init()
 
-                threads.append(grader_thread)
+                threads.append(grader_handler)
                 session_count += 1
 
             report_logger.info("Warm up process finished in {0} seconds".format(time.time() - warm_up_time))
 
             launch_time = time.time()
             # Start threads
-            for grader_thread in threads:
-                grader_thread.start()
+            for grader_handler in threads:
+                grader_handler.start()
 
                 # Wait for spawn interval
                 sleep(spawn_interval)
@@ -113,8 +113,8 @@ if __name__ == '__main__':
                 int(session_count * session_per_handler), time.time() - launch_time))
 
             # Wait for all threads to finish
-            for grader_thread in threads:
-                grader_thread.join()
+            for grader_handler in threads:
+                grader_handler.join()
 
             report_logger.info(
                 "Result: {0} / {1} passed. Total time: {2}".format(
