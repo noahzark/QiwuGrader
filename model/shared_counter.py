@@ -7,9 +7,9 @@ class SharedCounter(object):
         self.val = Value('i', init_val)
         self.lock = Lock()
 
-    def increment(self):
+    def increment(self, v=1):
         with self.lock:
-            self.val.value += 1
+            self.val.value += v
 
     def increment_without_lock(self):
         self.val.value += 1
@@ -48,4 +48,4 @@ def counter_test(session_count):
     return counter.value()
 
 if __name__ == '__main__':
-    print(counter_test(2000))
+    print(counter_test(8))

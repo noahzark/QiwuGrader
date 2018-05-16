@@ -73,7 +73,7 @@ class GraderProcess(GraderSkeleton, multiprocessing.Process):
         for grader_thread in threads:
             grader_thread.join()
 
-            self.shared_counter.increment(self.internal_counter.value())
+        self.shared_counter.increment(self.internal_counter.value())
 
     def run(self):
         self.grade()
