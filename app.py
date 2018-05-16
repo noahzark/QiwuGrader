@@ -33,10 +33,10 @@ if __name__ == '__main__':
             argv.remove(yml)
 
     if len(argv) >= 1:
-        test_session = int(sys.argv[0])
+        test_session = int(argv[0])
 
     if len(argv) == 2:
-        test_length = int(sys.argv[1])
+        test_length = int(argv[1])
 
     # Test all configs
     for i in test_config_file_name_list:
