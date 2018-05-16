@@ -1,11 +1,12 @@
 import threading
+import multiprocessing
+
 from grader import Grader
 
 
-class GraderThread(threading.Thread):
+class GraderSkeleton:
 
     def __init__(self, shared_counter, test_config):
-        super(GraderThread, self).__init__()
         self.grader = Grader()
 
         self.shared_counter = shared_counter
@@ -20,3 +21,17 @@ class GraderThread(threading.Thread):
 
     def run(self):
         self.grade()
+
+
+class GraderThread(threading.Thread, GraderSkeleton):
+
+    def __init__(self, shared_counter, test_config):
+        super(GraderThread, self).__init__()
+        GraderSkeleton.__init__(self, shared_counter, test_config)
+
+
+class GraderProcess(multiprocessing.Process, GraderSkeleton):
+
+    def __init__(self, shared_counter, test_config):
+        super(GraderThread, self).__init__()
+        GraderSkeleton.__init__(self, shared_counter, test_config)
