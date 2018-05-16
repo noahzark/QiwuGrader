@@ -1,4 +1,5 @@
 import sys
+import os
 
 _is_python_2 = True
 if sys.version_info >= (3, 0):
@@ -27,6 +28,9 @@ def to_str(str_obj):
 
 def write_utf_bom():
     open_mode = _is_python_2 and 'w' or 'wb'
+    isExists = os.path.exists('logs')
+    if not isExists:
+        os.makedirs('logs')
     with open('./logs/QiwuTest.csv', open_mode) as f:
         import codecs
         f.write(codecs.BOM_UTF8)
