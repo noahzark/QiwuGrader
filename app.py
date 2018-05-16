@@ -26,15 +26,11 @@ if __name__ == '__main__':
     # Parse parameters from the command line
     test_config_file_name_list = []
     argv = sys.argv[1:]
-    print(argv)
     for yml in sys.argv[1:]:
-        print(yml)
-        
+
         if yml.endswith('.yml'):
             test_config_file_name_list.append(yml)
             argv.remove(yml)
-            print(argv)
-    print(argv)
     if len(argv) >= 1:
         test_session = int(sys.argv[0])
     if len(argv) == 2:
