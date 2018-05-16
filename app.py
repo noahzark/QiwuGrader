@@ -118,9 +118,7 @@ if __name__ == '__main__':
 
             report_logger.info(
                 "Result: {0} / {1} passed. Total time: {2}".format(
-                    success_count.value(), session_count,
+                    success_count.value(), int(session_count * session_per_handler),
                     time.time() - process_time
                 )
             )
-    if os.name == 'nt':
-        os.system('pause')
