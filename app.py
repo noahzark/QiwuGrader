@@ -26,15 +26,19 @@ if __name__ == '__main__':
     # Parse parameters from the command line
     test_config_file_name_list = []
     argv = sys.argv[1:]
-    for yml in sys.argv[1:]:
 
+    for yml in sys.argv[1:]:
         if yml.endswith('.yml'):
             test_config_file_name_list.append(yml)
             argv.remove(yml)
+
     if len(argv) >= 1:
         test_session = int(sys.argv[0])
+
     if len(argv) == 2:
         test_length = int(sys.argv[1])
+
+    # Test all configs
     for i in test_config_file_name_list:
         test_config_file_name = i
         test_config = YamlConfigFileHandler(test_config_file_name)
