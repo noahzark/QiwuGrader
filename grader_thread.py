@@ -23,15 +23,15 @@ class GraderSkeleton:
         self.grade()
 
 
-class GraderThread(threading.Thread, GraderSkeleton):
+class GraderThread(GraderSkeleton, threading.Thread):
 
     def __init__(self, shared_counter, test_config):
-        super(GraderThread, self).__init__()
-        GraderSkeleton.__init__(self, shared_counter, test_config)
+        super(GraderThread, self).__init__(shared_counter, test_config)
+        threading.Thread.__init__(self)
 
 
-class GraderProcess(multiprocessing.Process, GraderSkeleton):
+class GraderProcess(GraderSkeleton, multiprocessing.Process):
 
     def __init__(self, shared_counter, test_config):
-        super(GraderThread, self).__init__()
-        GraderSkeleton.__init__(self, shared_counter, test_config)
+        super(GraderProcess, self).__init__(shared_counter, test_config)
+        multiprocessing.Process.__init__(self)
