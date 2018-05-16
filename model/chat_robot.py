@@ -155,7 +155,7 @@ class ChatRobot:
             result = self.wait_for_reply()
             retry += 1
         if to_str(result).find(content) == -1:
-            print("System welcome does not include welcome words in your configuration!")
+            self.logging.error("System welcome does not include welcome words in your configuration!")
             sys.exit()
         return result
 
