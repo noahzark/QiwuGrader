@@ -82,7 +82,7 @@ if __name__ == '__main__':
             # thread group
             threads = []
 
-            if not use_process:
+            if not use_process and test_session <= 100:
                 init_log_file()
 
             report_logger.info("Testing {0} sessions in {1} seconds, interval: {2}, using class {3}"
