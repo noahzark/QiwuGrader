@@ -1,15 +1,23 @@
 # QiwuGrader
-qiwu auto test tool
+Qiwu auto test tool, supports `accuracy / pressure` tests for `knowledge base, QA API and server backend`
+
+[TOC]
 
 ## Author
 
 Feliciano Long
+
+Zhiyu.Zhou
+
+[Statics](https://github.com/noahzark/QiwuGrader/graphs/contributors)
 
 ## Supports
 
 Python2 > 2.7 and Python3
 
 ## Installation
+
+### Download source code
 
 1. For Windows users please download (Mac users could skip this step)
 
@@ -21,21 +29,53 @@ https://www.python.org/ftp/python/2.7/python-2.7.msi
 pip install -r requirements.txt
 ```
 
+## Download release
+
+[Release executable](https://github.com/noahzark/QiwuGrader/releases)
+
 ## Usage
 
-single session test
+python app.py `testcase` `session number` `test duration`
+
+last two parameters are ignorable
+
+### single session test
+
+test one case:
 
 ``` bash
 python app.py ./testcases/test1.yml
 ```
 
-multiple session test (start 10 session in 5 seconds)
+test multiple cases:
+
+``` bash
+python app.py ./testcases/test1.yml ./testcases/test2.yml
+```
+
+### multiple session test (multi threading)
+
+Use multiple threads to test, in this mode only one CPU is used.
+
+start 10 sessions in 5 seconds
 
 ``` bash
 python app.py ./testcases/test3.yml 10 5
 ```
 
 `print_conversation` switch is suggested to turn off in multiple session test to make report more readable
+
+### multiple session test (multi processing)
+
+Use multiple processes to test, in this mode the program will start **logical CPU number** processes (each assigned `session number DIV CPU number` tasks)
+
+Similar to multi threading test, this mode will be enabled when **session count larget than1000** and **start interval less than  0.1s**
+
+start 1200 sessions in 60 seconds
+
+``` bash
+python app.py ./testcases/test4.yml 1200 60
+```
 
 ## Configuration
 
