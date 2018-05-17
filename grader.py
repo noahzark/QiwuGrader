@@ -192,7 +192,7 @@ class Grader():
         self.print_csv = configuration.get('print_csv', self.print_csv)
 
         if self.questions and len(self.questions) > 0:
-            report_logger.info("configuration loaded, there are {0} questions".format(len(self.questions)))
+            report_logger.info("grader ready, there are {0} questions".format(len(self.questions)))
 
     def test(self):
         success_count = 0
