@@ -69,7 +69,7 @@ python app.py ./testcases/test3.yml 10 5
 
 Use multiple processes to test, in this mode the program will start **logical CPU number** processes (each assigned `session number DIV CPU number` tasks)
 
-Similar to multi threading test, this mode will be enabled when **session count larget than1000** and **start interval less than  0.1s**
+Similar to multi threading test, this mode will be enabled when **session count larget than 1000** and **start interval less than  0.1s**
 
 start 1200 sessions in 60 seconds
 
