@@ -1,5 +1,6 @@
 import sys
 import time
+import os
 from time import sleep
 
 import multiprocessing
@@ -132,3 +133,4 @@ if __name__ == '__main__':
                 report_log_handler.doRollover()
                 test_log_handler.doRollover()
                 csv_log_handler.doRollover()
+    os.system('pause')

@@ -4,9 +4,9 @@ type: knowledge
 # 服务器参数
 server:
   protocol: http # 协议
-  host: localhost # 主机地址
-  port: 80  # 端口号
-  api: /api # 接口
+  host: 192.168.1.81 # 主机地址
+  port: 8080  # 端口号
+  api: /goingchatcn/chatbotserver.php # 接口
   nickname: landey # 【可选参数】 昵称，默认为 landey
   welcome: '我是小悟，很高兴跟您聊天' # 【可选参数】 欢迎词，留空不检查
   wait_duration: 0.2 # 【可选参数】 轮询时间，默认 0.2
