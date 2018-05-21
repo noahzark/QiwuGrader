@@ -59,3 +59,4 @@ def init_log_file():
         report_log_handler.doRollover()
         test_log_handler.doRollover()
         csv_log_handler.doRollover()
+    return report_log_handler,test_log_handler,csv_log_handler
