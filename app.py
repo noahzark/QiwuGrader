@@ -42,13 +42,11 @@ if __name__ == '__main__':
     if len(argv) == 2:
         test_length = int(argv[1])
 
-    # Test all configs
-    for i in test_config_file_name_list:
-        test_config_file_name = i
+    def run(test_config_file_name):
         test_config = YamlConfigFileHandler(test_config_file_name)
 
         if test_session == 1:  # single session grade
-            init_log_file()
+            # init_log_file()
 
             grader = Grader()
             grader.init(test_config)
@@ -82,8 +80,8 @@ if __name__ == '__main__':
             # thread group
             threads = []
 
-            if not use_process and test_session <= 100:
-                init_log_file()
+            # if not use_process and test_session <= 100:
+            #     init_log_file()
 
             report_logger.info("Testing {0} sessions in {1} seconds, interval: {2}, using class {3}"
                                .format(test_session, test_length, spawn_interval, Handler_Class.__name__))
@@ -122,3 +120,16 @@ if __name__ == '__main__':
                     time.time() - process_time
                 )
             )
+
+
+    # Test all configs
+    if not test_config_file_name_list:
+        test_config_file_name_list.append('test.yml')
+    if test_session == 1:  # single session grade
+        roll_log_file = init_log_file()
+    for test_config_file_name in test_config_file_name_list:
+        run(test_config_file_name)
+        if test_config_file_name != test_config_file_name_list[-1]:
+            report_logger.info('=====' * 20)
+            if test_session == 1:
+                roll_log_file()
