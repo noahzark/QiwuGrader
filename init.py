@@ -1,6 +1,6 @@
 import logging.handlers
 import os
-
+import sys
 from compatible import file_encoding
 
 FORMAT = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'
@@ -31,25 +31,25 @@ requests_logger.setLevel(logging.WARNING)
 
 
 def init_log_file():
-    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
     os.sys.path.insert(0, parent_dir)
-
-    log_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), './logs')
+    path = os.path.abspath(os.path.dirname(sys.argv[0]))
+    log_path = os.path.join(path, 'logs')
     if not os.path.exists(log_path):
         os.makedirs(log_path)
 
-    grade_report_filename = './logs/QiwuGrade.log'
-    log_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), grade_report_filename)
+    grade_report_filename = 'logs/QiwuGrade.log'
+    log_path = os.path.join(path, grade_report_filename)
     report_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
     report_logger.addHandler(report_log_handler)
 
-    grade_log_filename = './logs/QiwuTest.log'
-    log_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), grade_log_filename)
+    grade_log_filename = 'logs/QiwuTest.log'
+    log_path = os.path.join(path, grade_log_filename)
     test_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
     test_logger.addHandler(test_log_handler)
 
-    csv_log_filename = './logs/QiwuTest.csv'
-    log_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), csv_log_filename)
+    csv_log_filename = 'logs/QiwuTest.csv'
+    log_path = os.path.join(path, csv_log_filename)
     csv_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
     csv_logger.addHandler(csv_log_handler)
 
