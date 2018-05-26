@@ -1,6 +1,12 @@
 # 【可选参数】 测试类型，knowledge 知识库 或 api 接口，默认为knowledge
 type: knowledge
 
+# 服务负责人，知识库维护人，后端开发者
+author: AAA & BBB & CCC
+
+# 注释，需写明接入平台 / 客户名称
+comment: '这是上交会闲聊的测试'
+
 # 服务器参数
 server:
   protocol: http # 协议
@@ -12,6 +18,7 @@ server:
   wait_duration: 0.2 # 【可选参数】 轮询时间，默认 0.2
   max_wait: 10 # 【可选参数】 单轮对话最大等待时长，默认 10
   proxy: None # 【可选参数】 代理设置，留空或者 None 则直连
+  token_expire: 60000 # 【可选参数】 Chatkey失效时间，单位为毫秒，关键词单元设置的 idlelimit，默认为 60000
 
 # 【可选参数】 测试参数
 options:
