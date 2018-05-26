@@ -2,13 +2,13 @@
 type: api
 
 # 服务名称
-name: api_test_3
+name: api_json_test_3
 
 # 服务负责人，知识库维护人，后端开发者
 author: AAA & BBB & CCC
 
 # 注释，需写明接入平台 / 客户名称
-comment: '这是上交会闲聊的测试'
+comment: '这是一个QA问答对的json测试'
 
 # 服务器参数
 server:

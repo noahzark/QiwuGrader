@@ -1,10 +1,10 @@
 # 测试类型
 type: api
 
-# 服务名称
-name: test4
+name: api_form_test_4
+author: AAA & BBB & CCC
+comment: '这是一个后台 Form 表单的测试'
 
-# 服务器参数
 server:
   protocol: http
   host: localhost

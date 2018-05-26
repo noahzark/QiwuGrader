@@ -1,3 +1,7 @@
+name: knowledge_test_2
+author: AAA & BBB & CCC
+comment: '这是一个最简化版的知识库测试'
+
 server:
   protocol: http
   host: localhost
