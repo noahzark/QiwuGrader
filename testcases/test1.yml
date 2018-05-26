@@ -1,6 +1,9 @@
 # 【可选参数】 测试类型，knowledge 知识库 或 api 接口，默认为knowledge
 type: knowledge
 
+# 服务名称
+name: knowledge_test_1
+
 # 服务负责人，知识库维护人，后端开发者
 author: AAA & BBB & CCC
 
