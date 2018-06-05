@@ -15,10 +15,15 @@ from controller.config_file_handler import YamlConfigFileHandler
 from init import init_log_file
 from init import report_logger
 
+from dns_cache import _set_dns_cache
+
 GRADER_VERSION = '1.3'
 
 if __name__ == '__main__':
     report_logger.info("QiwuGrader ver {0}".format(GRADER_VERSION))
+
+    # use dns cache
+    _set_dns_cache()
 
     # test configuration file name
     test_config_file_name = 'test.yml'
