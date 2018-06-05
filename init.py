@@ -32,6 +32,9 @@ requests_logger.setLevel(logging.WARNING)
 
 
 def init_log_file():
+    from datetime import datetime
+    time_str = str(datetime.now()).replace(' ', '_').replace(':', '-')
+
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
     os.sys.path.insert(0, parent_dir)
     path = os.path.abspath(os.path.dirname(sys.argv[0]))
@@ -39,17 +42,17 @@ def init_log_file():
     if not os.path.exists(log_path):
         os.makedirs(log_path)
 
-    grade_report_filename = 'logs/QiwuGrade.log'
+    grade_report_filename = 'logs/QiwuGrade-{0}.log'.format(time_str)
     log_path = os.path.join(path, grade_report_filename)
     report_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
     report_logger.addHandler(report_log_handler)
 
-    grade_log_filename = 'logs/QiwuTest.log'
+    grade_log_filename = 'logs/QiwuTest-{0}.log'.format(time_str)
     log_path = os.path.join(path, grade_log_filename)
     test_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
     test_logger.addHandler(test_log_handler)
 
-    csv_log_filename = 'logs/QiwuTest.csv'
+    csv_log_filename = 'logs/QiwuTest-{0}.csv'.format(time_str)
     log_path = os.path.join(path, csv_log_filename)
     csv_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
     csv_logger.addHandler(csv_log_handler)
@@ -61,6 +64,8 @@ def init_log_file():
 
     # do roll log file
     need_roll = os.path.isfile(log_path)
-    if need_roll:
+
+    # don't roll since we are using time as the filename now
+    if False and need_roll:
         roll_log_file()
     return roll_log_file
