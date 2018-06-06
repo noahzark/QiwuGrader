@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import time
 
-from model import chat_robot
+from model.chat_robot import ChatRobot
 
 from compatible import to_str
 
@@ -23,6 +23,8 @@ class pMsgHandler:
 
         self.access_token = ''
         self.token_expire = 0
+
+        self.handler = ChatRobot(self.server, self.logging)
 
     # Pre process and returns if we need to handle this message
     def pre_chat(self, from_name, msg):
@@ -48,7 +50,6 @@ class pMsgHandler:
 
     # Process the message, and returns response
     def process_chat(self, from_name, msg):
-        handler = chat_robot.ChatRobot(self.server, self.logging)
 
         result = ''
         skip_first = False
@@ -59,29 +60,29 @@ class pMsgHandler:
         # If token exist, set chat key. Or login to chat robot
         if from_name in self.tokens:
             chat_key = self.tokens[from_name]
-            handler.set_chatkey(chat_key)
+            self.handler.set_chatkey(chat_key)
             self.logging.debug('Existed user {0} chat with chatkey {1}'.format(from_name, chat_key))
         else:
-            chat_key = handler.login(self.robot_name)
+            chat_key = self.handler.login(self.robot_name)
             self.tokens[from_name] = chat_key
             skip_first = True
             self.logging.debug('New user {0} login with chatkey {1}'.format(from_name, chat_key))
 
-            result = handler.wait_for_welcome()
+            result = self.handler.wait_for_welcome()
             result_str = to_str(result)
             self.logging.info('Login Res: {0} Length: {1} for chatkey {2}'.format(result_str, str(len(result_str)), chat_key))
 
         self.logging.debug('User ask: {0} with chatkey'.format(msg.encode('utf-8'), chat_key))
 
         if skip_first and len(result) != 0:
-            time.sleep(handler.wait_duration)
+            time.sleep(self.handler.wait_duration)
 
         # Send question
-        result = handler.chat_with_check(msg)
+        result = self.handler.chat_with_check(msg)
 
         # If send action doesn't have reply, wait for a reply
         if len(result) == 0:
-            result = handler.wait_for_reply()
+            result = self.handler.wait_for_reply()
 
         # Post process result string
         '''
