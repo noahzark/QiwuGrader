@@ -49,7 +49,7 @@ class pMsgHandler:
         return True
 
     # Process the message, and returns response
-    def process_chat(self, from_name, msg):
+    def process_chat(self, from_name, msg, login_wait=None):
 
         result = ''
         skip_first = False
@@ -71,6 +71,9 @@ class pMsgHandler:
             result = self.handler.wait_for_welcome()
             result_str = to_str(result)
             self.logging.info('Login Res: {0} Length: {1} for chatkey {2}'.format(result_str, str(len(result_str)), chat_key))
+
+            if login_wait:
+                time.sleep(login_wait)
 
         self.logging.debug('User ask: {0} with chatkey'.format(msg.encode('utf-8'), chat_key))
 
@@ -95,13 +98,13 @@ class pMsgHandler:
 
         return result
 
-    def handle_chat(self, from_name, msg):
+    def handle_chat(self, from_name, msg, login_wait=None):
         # Pre process and check if we really need to handle this message
         if self.pre_chat(from_name, msg):
             # Process the message and give a response
-            result = self.process_chat(from_name, msg)
+            result = self.process_chat(from_name, msg, login_wait=None)
 
-            self.logging.debug('Robot Response: {0}'.format(result))
+            self.logging.debug('Robot Response: {0} for chatkey {1}'.format(result, from_name))
 
             if result and result != '':
                 return result

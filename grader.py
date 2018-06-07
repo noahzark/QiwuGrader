@@ -72,7 +72,7 @@ class Grader():
                 question_str = str(question)
             else:
                 question_str = question
-            response = test_service.handle_chat(uid, question_str)
+            response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
             process_time = time.time() - process_time
 
             correct = True

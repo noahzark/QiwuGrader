@@ -17,7 +17,7 @@ from init import report_logger
 
 from dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.3.1'
+GRADER_VERSION = '1.3.２'
 
 if __name__ == '__main__':
     report_logger.info("QiwuGrader ver {0}".format(GRADER_VERSION))
