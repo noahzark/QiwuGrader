@@ -73,6 +73,9 @@ class Grader():
             else:
                 question_str = question
             response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
+            chat_key = None
+            if hasattr(test_service, 'tokens'):
+                chat_key = test_service.tokens[uid]
             process_time = time.time() - process_time
 
             correct = True
@@ -120,7 +123,10 @@ class Grader():
                         test_logger.info("Question {0}: {1}".format(i, question_str))
 
                         response = to_str(response)
-                        test_logger.info("Response :" + response)
+                        if chat_key:
+                            test_logger.info("Response: {0}, chatkey: {1}".format(response, chat_key))
+                        else:
+                            test_logger.info("Response :" + response)
 
                         if self.print_correct_answer or not correct:
                             answer_str = to_str(answer_str)

@@ -102,7 +102,7 @@ class pMsgHandler:
         # Pre process and check if we really need to handle this message
         if self.pre_chat(from_name, msg):
             # Process the message and give a response
-            result = self.process_chat(from_name, msg, login_wait=None)
+            result = self.process_chat(from_name, msg, login_wait=login_wait)
 
             self.logging.debug('Robot Response: {0} for chatkey {1}'.format(result, from_name))
 
