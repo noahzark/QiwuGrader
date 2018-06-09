@@ -124,7 +124,7 @@ class Grader():
 
                         response = to_str(response)
                         if chat_key:
-                            test_logger.info("Response: {0}, chatkey: {1}".format(response, chat_key))
+                            test_logger.info("Chatkey: {1} Response: {0}".format(response, chat_key))
                         else:
                             test_logger.info("Response :" + response)
 
