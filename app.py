@@ -17,7 +17,7 @@ from init import report_logger
 
 from dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.3.4'
+GRADER_VERSION = '1.3.5'
 
 if __name__ == '__main__':
     report_logger.info("QiwuGrader ver {0}".format(GRADER_VERSION))
@@ -130,8 +130,10 @@ if __name__ == '__main__':
     # Test all configs
     if not test_config_file_name_list:
         test_config_file_name_list.append('test.yml')
-    if test_session == 1:  # single session grade
-        roll_log_file = init_log_file()
+
+    # if test_session == 1:  # single session grade
+    roll_log_file = init_log_file()
+
     for test_config_file_name in test_config_file_name_list:
         run(test_config_file_name)
         if test_config_file_name != test_config_file_name_list[-1]:
