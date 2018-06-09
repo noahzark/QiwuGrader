@@ -17,7 +17,7 @@ from init import report_logger
 
 from dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.3.3'
+GRADER_VERSION = '1.3.4'
 
 if __name__ == '__main__':
     report_logger.info("QiwuGrader ver {0}".format(GRADER_VERSION))
@@ -67,7 +67,7 @@ if __name__ == '__main__':
             Handler_Class = GraderThread
 
             # use process to speed up grade
-            if test_session > 1000 and spawn_interval < 0.1:
+            if test_session > 512:
                 use_process = True
                 handler_count = multiprocessing.cpu_count()
                 session_per_handler = test_session / handler_count
