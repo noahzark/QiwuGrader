@@ -53,7 +53,7 @@ class BasicHandler:
         return True
 
     @abstractmethod
-    def process_chat(self, from_name, msg, skip_welcome=True, max_wait=None):
+    def process_chat(self, from_name, msg, skip_welcome=True, max_wait=None, login_wait=None):
         return ''
 
     def post_chat(self, from_name, result):
@@ -65,7 +65,7 @@ class BasicHandler:
 
         return result
 
-    def handle_chat(self, from_name, msg, max_wait=None):
+    def handle_chat(self, from_name, msg, max_wait=None, login_wait=None):
         msg_id = msg
         # pre process and check if we really need to handle this message
         handle_chat = self.pre_chat(from_name, msg)
@@ -76,7 +76,7 @@ class BasicHandler:
             if msg_id in self.msg:
                 result = self.msg[msg_id]
             else:
-                result = self.process_chat(from_name, msg, max_wait=max_wait)
+                result = self.process_chat(from_name, msg, max_wait=max_wait, login_wait=login_wait)
                 self.msg[msg_id] = result
 
             # post chat stuff

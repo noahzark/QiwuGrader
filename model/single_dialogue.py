@@ -22,6 +22,7 @@ class SingleDialogue(BasicRequest):
         self.host = server_config['host']
         self.port = server_config['port']
         self.endpoint = server_config['api']
+        self.method = server_config.get('method', 'POST')
 
         request_config = service_config.get_config('request')
 
@@ -29,21 +30,29 @@ class SingleDialogue(BasicRequest):
         self.threshold = request_config.get('threshold', None)
         self.answer_key = request_config.get('answer', 'reply')
         self.type = request_config.get('type', 'application/json')
+        self.headers = request_config.get('headers', None)
 
         self.url = self.to_uri()
 
     def chat(self, data):
         payload = encode_str(self.payload % data)
-        headers = {
-            'content-type': self.type
-        }
+
+        if not self.headers:
+            self.headers = {
+                'content-type': self.type
+            }
+        else:
+            self.headers['content-type'] = self.type
 
         try:
-            r = requests.post(self.url, data=payload, headers=headers, timeout=5)
+            if self.method == 'GET':
+                r = requests.get(self.url, params=payload, headers=self.headers, timeout=5)
+            else:
+                r = requests.post(self.url, data=payload, headers=self.headers, timeout=5)
             result = r.json()
-            logger.debug(result)
         except Exception as e:
             self.logger.exception(e)
+            self.logger.warning("Error process: " + r.text)
             return SingleDialogue.ERROR_REPLY
 
         if not self.threshold:

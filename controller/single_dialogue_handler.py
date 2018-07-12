@@ -26,7 +26,7 @@ class SingleDialogueHandler(BasicHandler):
         return False
 
     # Process the message, and returns response
-    def process_chat(self, from_name, msg, skip_welcome=True, max_wait=None):
+    def process_chat(self, from_name, msg, skip_welcome=True, max_wait=None, login_wait=None):
         if msg.find('START_ROBOT') > -1:
             return '你好'
         # Get reply

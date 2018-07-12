@@ -49,7 +49,7 @@ class pMsgHandler:
         return True
 
     # Process the message, and returns response
-    def process_chat(self, from_name, msg, login_wait=None):
+    def process_chat(self, from_name, msg, max_wait=None, login_wait=None):
 
         result = ''
         skip_first = False
