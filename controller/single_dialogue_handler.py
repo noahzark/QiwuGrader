@@ -8,6 +8,8 @@ from init import test_logger as logger
 
 from compatible import to_str
 
+import json
+
 
 class SingleDialogueHandler(BasicHandler):
 
@@ -35,6 +37,8 @@ class SingleDialogueHandler(BasicHandler):
             'msg': to_str(msg.encode('utf-8'))
         }
         result = self.handler.chat(data)
+        if isinstance(result, dict):
+            result = json.dumps(result)
         return result.encode('utf-8')
 
 
