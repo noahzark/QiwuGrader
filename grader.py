@@ -172,9 +172,9 @@ class Grader():
 
         robots = []
         if self.test_type == 'knowledge':
-            robots = config.get_config("usernames")
+            robots = config.get_config("usernames", None)
             if not robots:
-                robots = [config.get_config("username")]
+                robots = config.get_config("username", None)
         elif self.test_type == 'api':
             robots = config.get_config('name', 'Unknown')
 
@@ -209,6 +209,7 @@ class Grader():
 
         if self.robots is None or len(self.robots) == 0:
             report_logger.error("Couldn't find username to test, grader exit")
+            return 0
 
         for i, robot in enumerate(self.robots):
             if self.print_info:
