@@ -72,7 +72,8 @@ class Grader():
                 question_str = str(question)
             else:
                 question_str = question
-            response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
+            # response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
+            response = test_service.handle_chat(uid, question_str, self.question_interval)
             chat_key = None
             if hasattr(test_service, 'tokens'):
                 chat_key = test_service.tokens[uid]
@@ -124,7 +125,8 @@ class Grader():
 
                         response = to_str(response)
                         if chat_key:
-                            test_logger.info("Chatkey: {1} Response: {0}".format(response, chat_key))
+                            # test_logger.info("Chatkey: {1} Response: {0}".format(response, chat_key))
+                            test_logger.info("Chatkey: {1} Response: {0}".format(response, chat_key.decode('utf-8')))
                         else:
                             test_logger.info("Response :" + response)
 
@@ -140,7 +142,8 @@ class Grader():
                         if not correct:
                             test_logger.info("Answer: " + response)
                 elif not correct:
-                    test_logger.warning("Q {0} Wrong answer: {1}".format(i, response))
+                    # test_logger.warning("Q {0} Wrong answer: {1}".format(i, response))
+                    test_logger.warning("Q {0} Wrong answer: {1}".format(i, response.decode('utf-8')))
                     # print ("Q {0} Wrong answer: {1}".format(i, response))
 
             if not correct and self.suspend_on_error:

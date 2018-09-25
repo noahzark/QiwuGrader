@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import requests
 import time
+import json
 
 from compatible import to_str
 
@@ -53,7 +54,13 @@ class ChatRobot:
         }
 
         r = requests.post(self.to_uri(), data=login_data, proxies=self.proxy)
-        result = r.json()
+        try:
+            r = json.loads(r)
+        except (ValueError, TypeError):
+            # result = self.ERROR_REPLY
+            return self.ERROR_REPLY
+        else:
+            result = r.json()
 
         self.chat_key = str(result['chat_key'])
 
