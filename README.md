@@ -21,9 +21,11 @@ Python2 > 2.7 and Python3
 
 1. For Windows users please download (Mac users could skip this step)
 
-https://www.python.org/ftp/python/2.7/python-2.7.msi
+https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
 
-2. Install requirements
+2. (Optional) If Environment Variables is not set correctly, add python executable and pip script to system Path. [How to](https://www.pythoncentral.io/add-python-to-path-python-is-not-recognized-as-an-internal-or-external-command/)
+
+3. Install requirements
 
 ``` bash
 pip install -r requirements.txt

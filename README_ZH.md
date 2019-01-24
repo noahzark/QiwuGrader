@@ -21,9 +21,11 @@ Python2 > 2.7 及 Python3
 
 1. Windows用户请先安装（Mac用户可跳过此步）：
 
-https://www.python.org/ftp/python/2.7/python-2.7.msi
+https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
 
-2. 安装依赖
+2. （可选步骤）如果系统环境变量没有被正确是设置（无法直接通过cmd/terminal运行python/pip），把python可执行文件及pip路径添加进系统环境变量中 [详情](http://www.runoob.com/python/python-install.html)
+
+3. 安装依赖
 
 ``` bash
 pip install -r requirements.txt
