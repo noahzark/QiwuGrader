@@ -45,6 +45,7 @@ class SingleDialogue(BasicRequest):
         else:
             self.headers['content-type'] = self.type
 
+        r = 'None response'
         try:
             if self.method == 'GET':
                 r = requests.get(self.url, params=payload, headers=self.headers, timeout=self.timeout)
