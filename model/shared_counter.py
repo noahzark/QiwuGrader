@@ -3,8 +3,8 @@ from multiprocessing import Process, Value, Lock
 
 
 class SharedCounter(object):
-    def __init__(self, init_val=0):
-        self.val = Value('i', init_val)
+    def __init__(self, init_val=0, val_type='i'):
+        self.val = Value(val_type, init_val)
         self.lock = Lock()
 
     def increment(self, v=1):
