@@ -45,7 +45,7 @@ class SingleDialogue(BasicRequest):
         else:
             self.headers['content-type'] = self.type
 
-        r = 'None response'
+        r = None
         try:
             if self.method == 'GET':
                 r = requests.get(self.url, params=payload, headers=self.headers, timeout=self.timeout)
@@ -54,7 +54,7 @@ class SingleDialogue(BasicRequest):
             result = r.json()
         except Exception as e:
             self.logger.exception(e)
-            self.logger.warning("Error process: " + r.text)
+            self.logger.warning("Error process: " + (r and r.text or 'No response'))
             return SingleDialogue.ERROR_REPLY
 
         if not self.threshold:
