@@ -78,6 +78,7 @@ if __name__ == '__main__':
 
             # thread safe success counter
             success_count = SharedCounter()
+            success_time_count = SharedCounter(val_type='d')
 
             # process time counter
             process_time = time.time()
@@ -95,7 +96,7 @@ if __name__ == '__main__':
             warm_up_time = time.time()
             # Spawn threads
             while session_count < handler_count:
-                grader_handler = Handler_Class(success_count, test_config,
+                grader_handler = Handler_Class(success_count, test_config, success_time_count,
                                                loop=session_per_handler, spawn_interval=spawn_interval * handler_count)
                 grader_handler.init()
 
@@ -120,9 +121,11 @@ if __name__ == '__main__':
                 grader_handler.join()
 
             report_logger.info(
-                "Result: {0} / {1} passed. Total time: {2}".format(
+                "Result: {0} / {1} passed. Total time: {2}\nSuccess time: {3} Success avg: {4}".format(
                     success_count.value(), int(session_count * session_per_handler),
-                    time.time() - process_time
+                    time.time() - process_time,
+                    success_time_count.value(),
+                    success_time_count.value() / (success_count.value() * len(test_config.get_config("questions")))
                 )
             )
 

@@ -153,7 +153,7 @@ class Grader():
             csv_logger.info("{0},{1} / {2},{3},{4}".format(name, grade, len(questions), total_time, total_time/len(questions)))
 
         report_logger.info("{0} grade: {1} / {2}\ntime: {3} avg: {4}".format(name, grade, len(questions), total_time, total_time/len(questions)))
-        return grade == len(questions) and True or False
+        return grade == len(questions) and True or False, total_time
 
     def init(self, config):
         assert(isinstance(config, YamlConfigFileHandler))
@@ -204,6 +204,8 @@ class Grader():
 
     def test(self):
         success_count = 0
+        total_time = 0
+
         if len(self.questions) == 0:
             return 1
 
@@ -216,8 +218,10 @@ class Grader():
                 test_logger.info("Testing robot {0}".format(robot))
 
             try:
-                success_count += self.test_robot(robot, self.questions, self.answers) and 1 or 0
+                success, time_used = self.test_robot(robot, self.questions, self.answers)
+                success_count += success and 1 or 0
+                total_time += success and time_used or 0
             except Exception as e:
                 test_logger.exception(e)
 
-        return success_count
+        return success_count, total_time
