@@ -120,12 +120,14 @@ if __name__ == '__main__':
             for grader_handler in threads:
                 grader_handler.join()
 
+            questions_count = success_count.value() * len(test_config.get_config("questions"))
             report_logger.info(
-                "Result: {0} / {1} passed. Total time: {2}\nSuccess time: {3} Success avg: {4}".format(
+                "Result: {0} / {1} passed. Total time: {2}\nSuccess time: {3} Passed: {4} Success avg: {5}".format(
                     success_count.value(), int(session_count * session_per_handler),
                     time.time() - process_time,
                     success_time_count.value(),
-                    success_time_count.value() / (success_count.value() * len(test_config.get_config("questions")))
+                    questions_count,
+                    success_time_count.value() / questions_count
                 )
             )
 
