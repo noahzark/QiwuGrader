@@ -31,6 +31,7 @@ class SingleDialogue(BasicRequest):
         self.answer_key = request_config.get('answer', 'reply')
         self.type = request_config.get('type', 'application/json')
         self.headers = request_config.get('headers', None)
+        self.timeout = request_config.get('timeout', 5)
 
         self.url = self.to_uri()
 
@@ -46,9 +47,9 @@ class SingleDialogue(BasicRequest):
 
         try:
             if self.method == 'GET':
-                r = requests.get(self.url, params=payload, headers=self.headers, timeout=5)
+                r = requests.get(self.url, params=payload, headers=self.headers, timeout=self.timeout)
             else:
-                r = requests.post(self.url, data=payload, headers=self.headers, timeout=5)
+                r = requests.post(self.url, data=payload, headers=self.headers, timeout=self.timeout)
             result = r.json()
         except Exception as e:
             self.logger.exception(e)
