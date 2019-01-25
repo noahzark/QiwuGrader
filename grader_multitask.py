@@ -30,7 +30,7 @@ class GraderSkeleton:
 
 class GraderThread(GraderSkeleton, threading.Thread):
 
-    def __init__(self, shared_counter, test_config, time_counter=SharedCounter(), **kwargs):
+    def __init__(self, shared_counter, test_config, time_counter=SharedCounter(val_type='d'), **kwargs):
         super(GraderThread, self).__init__(shared_counter, test_config, time_counter, kwargs)
         threading.Thread.__init__(self)
 
@@ -59,13 +59,13 @@ class GraderThread(GraderSkeleton, threading.Thread):
 
 class GraderProcess(GraderSkeleton, multiprocessing.Process):
 
-    def __init__(self, shared_counter, test_config, **kwargs):
-        super(GraderProcess, self).__init__(shared_counter, test_config, kwargs)
+    def __init__(self, shared_counter, test_config, time_counter=SharedCounter(val_type='d'), **kwargs):
+        super(GraderProcess, self).__init__(shared_counter, test_config, time_counter, kwargs)
         multiprocessing.Process.__init__(self)
 
         # use an internal counter to reduce global success counter locks
         self.internal_counter = SharedCounter()
-        self.internal_timer = SharedCounter()
+        self.internal_timer = SharedCounter(val_type='d')
 
     def grade(self):
         # warm up threads
