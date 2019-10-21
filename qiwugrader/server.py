@@ -1,6 +1,6 @@
 import sys
 import os
-from grader.compatible import assemble_server_class
+from .grader.compatible import assemble_server_class
 
 # only serve the logs directory
 log_dir = os.path.join(os.path.dirname(__file__), 'logs')

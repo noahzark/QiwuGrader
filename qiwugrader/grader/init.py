@@ -2,7 +2,7 @@ import logging.handlers
 import os
 import sys
 
-from grader.compatible import file_encoding
+from .compatible import file_encoding
 
 FORMAT = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'
 # logging

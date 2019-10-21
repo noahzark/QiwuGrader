@@ -2,7 +2,7 @@
 import requests
 import time
 
-from grader.compatible import to_str
+from ..grader.compatible import to_str
 
 __author__ = 'Feliciano'
 

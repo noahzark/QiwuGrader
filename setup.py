@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from setuptools import setup, find_packages
-from qiwugrader import GRADER_VERSION
+from qiwugrader.app import GRADER_VERSION
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -14,11 +14,9 @@ setup(
     # 简短描述
     description='Qiwu auto test tool, supports accuracy/pressure tests for knowledge base, QA API and server backend',
     # 单文件模块写法
-    # py_modules=["my_module"],
+    py_modules=["qiwugrader"],
     # 多文件模块写法
-    packages=find_packages(
-        # exclude=['controller', 'model', 'grader']
-    ),
+    #packages=find_packages( # exclude=['controller', 'model', 'grader'] ),
 
     # ------以下均为可选参数
     # README
@@ -60,7 +58,7 @@ setup(
     # 类似package_data, 但指定不在当前包目录下的文件
     # data_files=[('my_data', ['data/data_file'])],
     # 新建终端命令并链接到模块函数
-    entry_points={'console_scripts': ['qiwugrader=qiwugrader:main']},
+    entry_points={'console_scripts': ['qiwugrader=app:main']},
     # 项目相关的额外链接
     project_urls={
         'Bug Reports': 'https://github.com/noahzark/QiwuGrader/issues',

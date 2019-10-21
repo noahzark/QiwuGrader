@@ -1,3 +1,5 @@
 requests
 pyyaml
 enum34
+better_exceptions
+srt

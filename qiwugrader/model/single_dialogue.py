@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 import requests
-from model.basic_request import BasicRequest
+from .basic_request import BasicRequest
 
-from grader.compatible import encode_str
+from ..grader.compatible import encode_str
 
 __author__ = 'Feliciano'
 

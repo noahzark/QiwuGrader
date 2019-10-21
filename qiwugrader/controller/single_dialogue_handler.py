@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from controller.config_file_handler import YamlConfigFileHandler
-from controller.basic_handler import BasicHandler
-from model.single_dialogue import SingleDialogue
+from ..controller.config_file_handler import YamlConfigFileHandler
+from ..controller.basic_handler import BasicHandler
+from ..model.single_dialogue import SingleDialogue
 
-from grader.init import test_logger as logger
+from ..grader.init import test_logger as logger
 
-from grader.compatible import to_str
+from ..grader.compatible import to_str
 
 import json
 
