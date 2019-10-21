@@ -1,6 +1,8 @@
 # QiwuGrader
 齐悟自动测试工具，支持对 `知识库 / QA问答对 / 服务器后端` 进行 `正确性 / 压力` 测试。
 
+[English version](https://github.com/noahzark/QiwuGrader/blob/master/README.md)
+
 [TOC]
 
 ## 作者

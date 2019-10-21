@@ -1,5 +1,8 @@
 # QiwuGrader
+
 Qiwu auto test tool, supports `accuracy / pressure` tests for `knowledge base, QA API and server backend`
+
+[Chinese version](https://github.com/noahzark/QiwuGrader/blob/master/README_ZH.md)
 
 [TOC]
 
