@@ -11,6 +11,10 @@ server:
   port: 8086
   api: /api
 
+options:
+  question_interval: 0 # 提问间隔，默认为 0
+  suspend_on_error: false  # 错误中断，默认为 false
+
 # 请求参数
 request:
   type: 'application/x-www-form-urlencoded' # 请求的content-type，默认为application/json

@@ -4,22 +4,108 @@ from time import sleep
 
 import multiprocessing
 
-from grader_multitask import GraderThread
-from grader_multitask import GraderProcess
+from grader.grader_multitask import GraderThread
+from grader.grader_multitask import GraderProcess
 
-from grader import Grader
+from grader.grader import Grader
 from model.shared_counter import SharedCounter
 
 from controller.config_file_handler import YamlConfigFileHandler
 
-from init import init_log_file
-from init import report_logger
+from grader.init import init_log_file
+from grader.init import report_logger
 
-from dns_cache import _set_dns_cache
+from grader.dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.5.1'
+GRADER_VERSION = '1.6.1'
 
-if __name__ == '__main__':
+
+def run(test_config_file_name, test_session, test_length):
+    test_config = YamlConfigFileHandler(test_config_file_name)
+
+    if test_session == 1:  # single session grade
+        # init_log_file()
+
+        grader = Grader()
+        grader.init(test_config)
+        grader.test()
+    elif test_session > 1:  # multi session grade
+        # calculate thread spawn interval
+        spawn_interval = test_length / (test_session * 1.0)
+
+        # determine grader class
+        use_process = False
+        handler_count = test_session
+        session_per_handler = 1
+        Handler_Class = GraderThread
+
+        # use process to speed up grade
+        if test_session > 512:
+            use_process = True
+            handler_count = multiprocessing.cpu_count()
+            session_per_handler = test_session / handler_count
+            Handler_Class = GraderProcess
+
+        # count the number of spawned sessions
+        session_count = 0
+
+        # thread safe success counter
+        success_count = SharedCounter()
+        success_time_count = SharedCounter(val_type='d')
+
+        # process time counter
+        process_time = time.time()
+
+        # thread group
+        threads = []
+
+        # if not use_process and test_session <= 100:
+        #     init_log_file()
+
+        report_logger.info("Testing {0} sessions in {1} seconds, interval: {2}, using class {3}"
+                           .format(test_session, test_length, spawn_interval, Handler_Class.__name__))
+        report_logger.info("Warming up ...")
+
+        warm_up_time = time.time()
+        # Spawn threads
+        while session_count < handler_count:
+            grader_handler = Handler_Class(success_count, test_config, success_time_count,
+                                           loop=session_per_handler, spawn_interval=spawn_interval * handler_count)
+            grader_handler.init()
+
+            threads.append(grader_handler)
+            session_count += 1
+
+        report_logger.info("Warm up process finished in {0} seconds".format(time.time() - warm_up_time))
+
+        launch_time = time.time()
+        # Start threads
+        for grader_handler in threads:
+            grader_handler.start()
+
+            # Wait for spawn interval
+            sleep(spawn_interval)
+
+        report_logger.info("{0} sessions started in {1}".format(
+            int(session_count * session_per_handler), time.time() - launch_time))
+
+        # Wait for all threads to finish
+        for grader_handler in threads:
+            grader_handler.join()
+
+        questions_count = success_count.value() * len(test_config.get_config("questions"))
+        report_logger.info(
+            "Result: {0} / {1} passed. Total time: {2}\nSuccess time: {3} Passed: {4} Success avg: {5}".format(
+                success_count.value(), int(session_count * session_per_handler),
+                time.time() - process_time,
+                success_time_count.value(),
+                questions_count,
+                success_time_count.value() / questions_count
+            )
+        )
+
+
+def main():
     report_logger.info("QiwuGrader ver {0}".format(GRADER_VERSION))
 
     # use dns cache
@@ -47,91 +133,6 @@ if __name__ == '__main__':
     if len(argv) == 2:
         test_length = int(argv[1])
 
-    def run(test_config_file_name):
-        test_config = YamlConfigFileHandler(test_config_file_name)
-
-        if test_session == 1:  # single session grade
-            # init_log_file()
-
-            grader = Grader()
-            grader.init(test_config)
-            grader.test()
-        elif test_session > 1:  # multi session grade
-            # calculate thread spawn interval
-            spawn_interval = test_length / (test_session * 1.0)
-
-            # determine grader class
-            use_process = False
-            handler_count = test_session
-            session_per_handler = 1
-            Handler_Class = GraderThread
-
-            # use process to speed up grade
-            if test_session > 512:
-                use_process = True
-                handler_count = multiprocessing.cpu_count()
-                session_per_handler = test_session / handler_count
-                Handler_Class = GraderProcess
-
-            # count the number of spawned sessions
-            session_count = 0
-
-            # thread safe success counter
-            success_count = SharedCounter()
-            success_time_count = SharedCounter(val_type='d')
-
-            # process time counter
-            process_time = time.time()
-
-            # thread group
-            threads = []
-
-            # if not use_process and test_session <= 100:
-            #     init_log_file()
-
-            report_logger.info("Testing {0} sessions in {1} seconds, interval: {2}, using class {3}"
-                               .format(test_session, test_length, spawn_interval, Handler_Class.__name__))
-            report_logger.info("Warming up ...")
-
-            warm_up_time = time.time()
-            # Spawn threads
-            while session_count < handler_count:
-                grader_handler = Handler_Class(success_count, test_config, success_time_count,
-                                               loop=session_per_handler, spawn_interval=spawn_interval * handler_count)
-                grader_handler.init()
-
-                threads.append(grader_handler)
-                session_count += 1
-
-            report_logger.info("Warm up process finished in {0} seconds".format(time.time() - warm_up_time))
-
-            launch_time = time.time()
-            # Start threads
-            for grader_handler in threads:
-                grader_handler.start()
-
-                # Wait for spawn interval
-                sleep(spawn_interval)
-
-            report_logger.info("{0} sessions started in {1}".format(
-                int(session_count * session_per_handler), time.time() - launch_time))
-
-            # Wait for all threads to finish
-            for grader_handler in threads:
-                grader_handler.join()
-
-            questions_count = success_count.value() * len(test_config.get_config("questions"))
-            report_logger.info(
-                "Result: {0} / {1} passed. Total time: {2}\nSuccess time: {3} Passed: {4} Success avg: {5}".format(
-                    success_count.value(), int(session_count * session_per_handler),
-                    time.time() - process_time,
-                    success_time_count.value(),
-                    questions_count,
-                    success_time_count.value() / questions_count
-                )
-            )
-
-
     # Test all configs
     if not test_config_file_name_list:
         test_config_file_name_list.append('test.yml')
@@ -140,8 +141,12 @@ if __name__ == '__main__':
     roll_log_file = init_log_file()
 
     for test_config_file_name in test_config_file_name_list:
-        run(test_config_file_name)
+        run(test_config_file_name, test_session=test_session, test_length=test_length)
         if test_config_file_name != test_config_file_name_list[-1]:
             report_logger.info('=====' * 20)
             if test_session == 1:
                 roll_log_file()
+
+
+if __name__ == '__main__':
+    main()

@@ -30,6 +30,11 @@ class BasicHandler:
 
         self._handles_image = False
 
+        self.logger = None
+
+    def set_logging(self, logger):
+        self.logger = logger
+
     def set_replacement(self, replacement):
         self.replacement = {}
         if replacement:
@@ -65,8 +70,9 @@ class BasicHandler:
 
         return result
 
-    def handle_chat(self, from_name, msg, max_wait=None, login_wait=None):
-        msg_id = msg
+    def handle_chat(self, from_name, msg, max_wait=None, login_wait=None, msg_id=None):
+        if msg_id is None:
+            msg_id = msg
         # pre process and check if we really need to handle this message
         handle_chat = self.pre_chat(from_name, msg)
         if handle_chat:

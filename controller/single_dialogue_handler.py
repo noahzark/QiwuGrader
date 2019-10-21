@@ -4,9 +4,9 @@ from controller.config_file_handler import YamlConfigFileHandler
 from controller.basic_handler import BasicHandler
 from model.single_dialogue import SingleDialogue
 
-from init import test_logger as logger
+from grader.init import test_logger as logger
 
-from compatible import to_str
+from grader.compatible import to_str
 
 import json
 

@@ -1,9 +1,8 @@
 # -*- coding:utf-8 -*-
 import requests
-from init import test_logger as logger
 from model.basic_request import BasicRequest
 
-from compatible import encode_str
+from grader.compatible import encode_str
 
 __author__ = 'Feliciano'
 
@@ -35,6 +34,8 @@ class SingleDialogue(BasicRequest):
 
         self.url = self.to_uri()
 
+        self.proxy = {'http': 'http://localhost:8888'}
+
     def chat(self, data):
         payload = encode_str(self.payload % data)
 
@@ -48,9 +49,9 @@ class SingleDialogue(BasicRequest):
         r = None
         try:
             if self.method == 'GET':
-                r = requests.get(self.url, params=payload, headers=self.headers, timeout=self.timeout)
+                r = requests.get(self.url, params=payload, headers=self.headers, timeout=self.timeout, proxies=self.proxy)
             else:
-                r = requests.post(self.url, data=payload, headers=self.headers, timeout=self.timeout)
+                r = requests.post(self.url, data=payload, headers=self.headers, timeout=self.timeout, proxies=self.proxy)
             result = r.json()
         except Exception as e:
             self.logger.exception(e)
@@ -66,3 +67,4 @@ class SingleDialogue(BasicRequest):
                     return result[self.answer_key][:cut]
                 return result[self.answer_key]
         return SingleDialogue.DEFAULT_REPLY
+  

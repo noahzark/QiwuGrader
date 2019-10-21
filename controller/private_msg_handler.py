@@ -3,7 +3,7 @@ import time
 
 from model.chat_robot import ChatRobot
 
-from compatible import to_str
+from grader.compatible import to_str
 
 __author__ = 'Feliciano'
 
