@@ -2,7 +2,7 @@ import logging.handlers
 import os
 import sys
 
-from .compatible import file_encoding
+from qiwugrader.grader.compatible import file_encoding
 
 FORMAT = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'
 # logging

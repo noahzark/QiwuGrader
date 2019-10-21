@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
 import time
 
-from ..model.chat_robot import ChatRobot
+from qiwugrader.model.chat_robot import ChatRobot
 
-from ..grader.compatible import to_str
+from qiwugrader.grader.compatible import to_str
 
 __author__ = 'Feliciano'
 

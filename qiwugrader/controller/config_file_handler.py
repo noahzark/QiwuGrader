@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import yaml
 
-from ..grader.compatible import open_config_file
+from qiwugrader.grader.compatible import open_config_file
 
 __author__ = 'Feliciano'
 

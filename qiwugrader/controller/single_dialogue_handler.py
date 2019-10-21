@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from ..controller.config_file_handler import YamlConfigFileHandler
-from ..controller.basic_handler import BasicHandler
-from ..model.single_dialogue import SingleDialogue
+from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
+from qiwugrader.controller.basic_handler import BasicHandler
+from qiwugrader.model.single_dialogue import SingleDialogue
 
-from ..grader.init import test_logger as logger
+from qiwugrader.grader.init import test_logger as logger
 
-from ..grader.compatible import to_str
+from qiwugrader.grader.compatible import to_str
 
 import json
 

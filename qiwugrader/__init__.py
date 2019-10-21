@@ -1,7 +1,9 @@
 __all__ = ['app', 'server', 'controller', 'grader', 'model']
 
-from . import app
+from qiwugrader import app
+from qiwugrader.app import main
 
-from .controller import *
-from .grader import *
-from .model import *
+
+from qiwugrader.controller import *
+from qiwugrader.grader import *
+from qiwugrader.model import *

@@ -6,7 +6,7 @@ Qiwu auto test tool, supports `accuracy / pressure` tests for `knowledge base, Q
 
 [TOC]
 
-## Author
+## 1. Author
 
 Feliciano Long
 
@@ -14,11 +14,15 @@ Zhiyu.Zhou
 
 [Statics](https://github.com/noahzark/QiwuGrader/graphs/contributors)
 
-## Supports
+## 2. Supports
 
-Python2 > 2.7 and Python3
+Python2 > 2.7 and Python3 (preferred)
 
-## Installation
+## 3. Installation
+
+### Install from PYPI
+
+`pip install QiwuGrader`
 
 ### Download source code
 
@@ -34,28 +38,48 @@ https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
 pip install -r requirements.txt
 ```
 
-## Download release
+### ~~Download release~~
 
-[Release executable](https://github.com/noahzark/QiwuGrader/releases)
+Deprecated, please install using pip
 
-## Usage
+[~~Release executable~~](https://github.com/noahzark/QiwuGrader/releases)
 
-python app.py `testcase` `session number` `test duration`
+## 4. Run
 
 last two parameters are ignorable
+
+### Run from module
+
+```bash
+qiwugrader [testcase] [session number] [test duration]
+```
+
+or
+
+```bash
+python -m qiwugrader.app [testcase] [session number] [test duration]
+```
+
+### Run from source
+
+```bash
+python qiwugrader/app.py [testcase] [session number] [test duration]
+```
+
+## 5. Usage
 
 ### single session test
 
 test one case:
 
 ``` bash
-python app.py ./testcases/test1.yml
+qiwugrader ./testcases/test1.yml
 ```
 
 test multiple cases:
 
 ``` bash
-python app.py ./testcases/test1.yml ./testcases/test2.yml
+qiwugrader ./testcases/test1.yml ./testcases/test2.yml
 ```
 
 ### multiple session test (multi threading)
@@ -65,7 +89,7 @@ Use multiple threads to test, in this mode only one CPU is used.
 start 10 sessions in 5 seconds
 
 ``` bash
-python app.py ./testcases/test3.yml 10 5
+qiwugrader ./testcases/test3.yml 10 5
 ```
 
 `print_conversation` switch is suggested to turn off in multiple session test to make report more readable
@@ -79,10 +103,10 @@ Similar to multi threading test, this mode will be enabled when **session count 
 start 1200 sessions in 60 seconds
 
 ``` bash
-python app.py ./testcases/test4.yml 1200 60
+qiwugrader ./testcases/test4.yml 1200 60
 ```
 
-## Configuration
+## 6. Configuration
 
 Examples are under `/testcases` folder
 

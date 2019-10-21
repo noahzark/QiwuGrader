@@ -3,18 +3,18 @@ import time
 import re
 import json
 
-from ..controller.config_file_handler import YamlConfigFileHandler
-from ..controller.private_msg_handler import pMsgHandler
-from ..controller.single_dialogue_handler import SingleDialogueHandler
+from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
+from qiwugrader.controller.private_msg_handler import pMsgHandler
+from qiwugrader.controller.single_dialogue_handler import SingleDialogueHandler
 
-from ..model.string_helper import id_generator
+from qiwugrader.model.string_helper import id_generator
 
-from ..grader.init import test_logger
-from ..grader.init import report_logger
-from ..grader.init import csv_logger
+from qiwugrader.grader.init import test_logger
+from qiwugrader.grader.init import report_logger
+from qiwugrader.grader.init import csv_logger
 
-from ..grader.compatible import to_str
-from ..grader.compatible import write_utf_bom
+from qiwugrader.grader.compatible import to_str
+from qiwugrader.grader.compatible import write_utf_bom
 
 try:
     basestring

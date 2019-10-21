@@ -4,20 +4,20 @@ from time import sleep
 
 import multiprocessing
 
-from .grader.grader_multitask import GraderThread
-from .grader.grader_multitask import GraderProcess
+from qiwugrader.grader.grader_multitask import GraderThread
+from qiwugrader.grader.grader_multitask import GraderProcess
 
-from .grader.grader_core import Grader
-from .model.shared_counter import SharedCounter
+from qiwugrader.grader.grader_core import Grader
+from qiwugrader.model.shared_counter import SharedCounter
 
-from .controller.config_file_handler import YamlConfigFileHandler
+from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
 
-from .grader.init import init_log_file
-from .grader.init import report_logger
+from qiwugrader.grader.init import init_log_file
+from qiwugrader.grader.init import report_logger
 
-from .grader.dns_cache import _set_dns_cache
+from qiwugrader.grader.dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.6.4'
+GRADER_VERSION = '1.6.6'
 
 
 def run(test_config_file_name, test_session, test_length):

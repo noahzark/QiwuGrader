@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 import requests
-from .basic_request import BasicRequest
+from qiwugrader.model.basic_request import BasicRequest
 
-from ..grader.compatible import encode_str
+from qiwugrader.grader.compatible import encode_str
 
 __author__ = 'Feliciano'
 

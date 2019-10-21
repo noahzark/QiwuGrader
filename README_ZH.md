@@ -5,7 +5,7 @@
 
 [TOC]
 
-## 作者
+## 1. 作者
 
 Feliciano Long
 
@@ -13,11 +13,15 @@ Zhiyu.Zhou
 
 [统计数据](https://github.com/noahzark/QiwuGrader/graphs/contributors)
 
-## 支持
+## 2. 支持
 
-Python2 > 2.7 及 Python3
+Python2 > 2.7 及 Python3 （推荐）
 
-## 安装
+## 3. 安装
+
+### 通过 PYPI
+
+`pip install QiwuGrader`
 
 ### 下载源代码
 
@@ -25,7 +29,7 @@ Python2 > 2.7 及 Python3
 
 https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
 
-2. （可选步骤）如果系统环境变量没有被正确是设置（无法直接通过cmd/terminal运行python/pip），把python可执行文件及pip路径添加进系统环境变量中 [详情](http://www.runoob.com/python/python-install.html)
+2. （可选步骤）如果系统环境变量没有被正确是设置（无法直接通过cmd/terminal运行python/pip），把python可执行文件及pip路径添加进系统环 境变量中 [详情](http://www.runoob.com/python/python-install.html)
 
 3. 安装依赖
 
@@ -33,28 +37,48 @@ https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
 pip install -r requirements.txt
 ```
 
-### 下载发行版
+### ~~下载发行版~~
 
-[直接下载发行版exe](https://github.com/noahzark/QiwuGrader/releases)
+已废弃，请使用 pip 直接安装
 
-## 使用方法
+[~~直接下载发行版exe~~](https://github.com/noahzark/QiwuGrader/releases)
 
-python app.py `测试用例` `会话数` `会话启动时间`
+## 4. 运行方法
 
-后两个参数可省略
+最后两个参数可省略
+
+### 使用 module 运行
+
+```bash
+qiwugrader [testcase] [session number] [test duration]
+```
+
+or
+
+```bash
+python -m qiwugrader.app [testcase] [session number] [test duration]
+```
+
+### 使用源代码运行
+
+```bash
+python qiwugrader/app.py [testcase] [session number] [test duration]
+```
+
+## 5. 使用方法
 
 ### 单会话测试
 
 测试一个用例：
 
 ``` bash
-python app.py ./testcases/test1.yml
+qiwugrader ./testcases/test1.yml
 ```
 
 轮流测试多个用例：
 
 ``` bash
-python app.py ./testcases/test1.yml ./testcases/test2.yml
+qiwugrader ./testcases/test1.yml ./testcases/test2.yml
 ```
 
 ### 多线程压力测试
@@ -64,7 +88,7 @@ python app.py ./testcases/test1.yml ./testcases/test2.yml
 5秒内启动10个线程：
 
 ``` bash
-python app.py ./testcases/test3.yml 10 5
+qiwugrader ./testcases/test3.yml 10 5
 ```
 
 在多线程测试中，建议关闭 `print_conversation` 开关以获得更佳的测试报告阅读效果
@@ -78,15 +102,15 @@ python app.py ./testcases/test3.yml 10 5
 60s 内进行 1200 次测试：
 
 ``` bash
-python app.py ./testcases/test4.yml 1200 60
+qiwugrader ./testcases/test4.yml 1200 60
 ```
 
-## 配置
+## 6. 配置
 
 所有参考的配置样例都在 `testcases` 文件夹下
 
 知识库测试参考 `test1` （带有详细解释的完整测试样例） 和 `test2` （最简测试样例）。 API/模糊匹配测试参照 `test3` （json请求，即QA问答对测试）和 `test4` （表单请求，即知识库后端）
 
-## Windows控制台出现乱码
+## 7. Windows控制台出现乱码
 
 先输入 `chcp 65001` 激活UTF-8代码页

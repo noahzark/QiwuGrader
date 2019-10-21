@@ -3,8 +3,8 @@ import multiprocessing
 from abc import abstractmethod
 from time import sleep
 
-from .grader_core import Grader
-from ..model.shared_counter import SharedCounter
+from qiwugrader.grader.grader_core import Grader
+from qiwugrader.model.shared_counter import SharedCounter
 
 
 class GraderSkeleton:
