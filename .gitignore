@@ -9,6 +9,13 @@
 *.csv
 *.csv.*
 
+# Temp files
+configs/
+logs/
+subtitle/
+subtitle20191021/
+.idea/
+
 # Python
 # =========================
 
