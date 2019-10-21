@@ -9,12 +9,12 @@ from controller.single_dialogue_handler import SingleDialogueHandler
 
 from model.string_helper import id_generator
 
-from init import test_logger
-from init import report_logger
-from init import csv_logger
+from grader.init import test_logger
+from grader.init import report_logger
+from grader.init import csv_logger
 
-from compatible import to_str
-from compatible import write_utf_bom
+from grader.compatible import to_str
+from grader.compatible import write_utf_bom
 
 try:
     basestring
