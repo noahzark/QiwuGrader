@@ -3,7 +3,7 @@ import multiprocessing
 from abc import abstractmethod
 from time import sleep
 
-from grader.grader import Grader
+from grader.grader_core import Grader
 from model.shared_counter import SharedCounter
 
 
