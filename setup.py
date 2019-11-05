@@ -16,7 +16,7 @@ setup(
     # 单文件模块写法
     #py_modules=["qiwugrader"],
     # 多文件模块写法
-    packages=find_packages(exclude=['controller', 'model', 'grader']),
+    packages=find_packages(),
 
     # ------以下均为可选参数
     # README

@@ -34,7 +34,11 @@ class SingleDialogueHandler(BasicHandler):
         # Get reply
         data = {
             'uid': to_str(from_name.encode('utf-8')),
-            'msg': to_str(msg.encode('utf-8'))
+            'msg': to_str(msg.encode('utf-8')),
+            'appkey': 'qiwu-grader',
+            'nickname': 'tester',
+            'new_session': 'false',
+            'max_wait': '20'
         }
         result = self.handler.chat(data)
         if isinstance(result, dict):
