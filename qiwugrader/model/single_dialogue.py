@@ -3,7 +3,7 @@ import requests
 import json
 from qiwugrader.model.basic_request import BasicRequest
 
-from qiwugrader.grader.compatible import encode_str
+from qiwugrader.grader.compatible import encode_str, to_str
 
 __author__ = 'Feliciano'
 
@@ -42,7 +42,7 @@ class SingleDialogue(BasicRequest):
         if self.threshold and self.threshold > 1:
             return SingleDialogue.DEFAULT_REPLY
 
-        payload = encode_str(self.payload % data)
+        payload = to_str(self.payload % data)
         headers = {}
 
         if self.method == "POST":
