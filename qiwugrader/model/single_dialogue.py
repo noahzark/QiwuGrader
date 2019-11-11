@@ -38,6 +38,8 @@ class SingleDialogue(BasicRequest):
 
         self.url = self.to_uri()
 
+        self.session = requests.session()
+
     def chat(self, data, max_wait=None):
         if self.threshold and self.threshold > 1:
             return SingleDialogue.DEFAULT_REPLY
@@ -51,9 +53,9 @@ class SingleDialogue(BasicRequest):
         result = None
         try:
             if self.method == 'GET':
-                r = requests.get(self.url, params=payload, headers=headers, timeout=max_wait or self.timeout)
+                r = self.session.get(self.url, params=payload, headers=headers, timeout=max_wait or self.timeout)
             else:
-                r = requests.post(self.url, data=payload, headers=headers, timeout=max_wait or self.timeout)
+                r = self.session.post(self.url, data=payload, headers=headers, timeout=max_wait or self.timeout)
             result = r.json()
         except requests.exceptions.Timeout:
             self.logger.error("request timeout {0} {1}:{2}".format(self.method, self.host, self.port))

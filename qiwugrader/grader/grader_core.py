@@ -143,7 +143,7 @@ class Grader():
                     else:
                         test_logger.info("Question {0}: {1} in {2} seconds".format(i, correct and "Passed" or "Wrong", process_time))
                         if not correct:
-                            test_logger.info("Answer: " + response)
+                            test_logger.info("Answer: " + to_str(response))
                 elif not correct:
                     test_logger.warning("Q {0} Wrong answer: {1}".format(i, to_str(response)))
                     # print ("Q {0} Wrong answer: {1}".format(i, response))
