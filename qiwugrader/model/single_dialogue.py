@@ -65,7 +65,7 @@ class SingleDialogue(BasicRequest):
                 self.logger.info("error decoding: " + r.text)
             self.logger.error("request value error {0} {1}:{2}".format(self.method, self.host, self.port))
         except requests.exceptions.RequestException as e:
-            self.logger.info(e.message)
+            self.logger.info(e)
             self.logger.error("request error {0} {1}:{2}".format(self.method, self.host, self.port))
         except Exception as e:
             self.logger.error("request exception {0} {1}:{2}".format(self.method, self.host, self.port))
