@@ -6,6 +6,7 @@ import json
 from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
 from qiwugrader.controller.private_msg_handler import pMsgHandler
 from qiwugrader.controller.single_dialogue_handler import SingleDialogueHandler
+from qiwugrader.model.single_dialogue import SingleDialogue
 
 from qiwugrader.model.string_helper import id_generator
 
@@ -25,6 +26,7 @@ except NameError:
 class Grader():
 
     ERROR_REPLY = u'服务器通信错误。'.encode('utf-8')
+    TIMEOUT_REPLY = u'请让我再想想。'.encode('utf-8')
 
     def __init__(self):
         self.config = {}
@@ -79,6 +81,9 @@ class Grader():
             process_time = time.time() - process_time
 
             correct = True
+            if response == self.TIMEOUT_REPLY:
+                correct = False
+
             answer_str = 'No answer found for question {0}'.format(i)
             if answers and i in answers:
                 answer = answers[i]
