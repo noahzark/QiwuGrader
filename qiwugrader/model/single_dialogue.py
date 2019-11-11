@@ -42,7 +42,7 @@ class SingleDialogue(BasicRequest):
         if self.threshold and self.threshold > 1:
             return SingleDialogue.DEFAULT_REPLY
 
-        payload = to_str(self.payload % data)
+        payload = encode_str(to_str(self.payload % data))
         headers = {}
 
         if self.method == "POST":
@@ -55,12 +55,12 @@ class SingleDialogue(BasicRequest):
             else:
                 r = requests.post(self.url, data=payload, headers=headers, timeout=max_wait or self.timeout)
             result = r.json()
-        except requests.exceptions.Timeout as e:
-            self.logger.info(e.message)
+        except requests.exceptions.Timeout:
             self.logger.error("request timeout {0} {1}:{2}".format(self.method, self.host, self.port))
             return SingleDialogue.REQUEST_TIMEOUT
         except ValueError:
-            self.logger.info("error decoding: " + r.text)
+            if r:
+                self.logger.info("error decoding: " + r.text)
             self.logger.error("request value error {0} {1}:{2}".format(self.method, self.host, self.port))
         except requests.exceptions.RequestException as e:
             self.logger.info(e.message)
