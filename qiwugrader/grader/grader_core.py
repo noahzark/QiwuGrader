@@ -17,6 +17,8 @@ from qiwugrader.grader.init import csv_logger
 from qiwugrader.grader.compatible import to_str
 from qiwugrader.grader.compatible import write_utf_bom
 
+from qiwugrader.model.single_dialogue import SingleDialogue
+
 try:
     basestring
 except NameError:
@@ -27,6 +29,8 @@ class Grader():
 
     ERROR_REPLY = u'服务器通信错误。'.encode('utf-8')
     TIMEOUT_REPLY = u'请让我再想想。'.encode('utf-8')
+    REQUEST_TIMEOUT = SingleDialogue.REQUEST_TIMEOUT.encode('utf-8')
+    REQUEST_ERROR_REPLY = SingleDialogue.ERROR_REPLY.encode('utf-8')
 
     def __init__(self):
         self.config = {}
@@ -82,6 +86,10 @@ class Grader():
 
             correct = True
             if response == self.TIMEOUT_REPLY:
+                correct = False
+            if response == self.REQUEST_TIMEOUT:
+                correct = False
+            if response == self.REQUEST_ERROR_REPLY:
                 correct = False
 
             answer_str = 'No answer found for question {0}'.format(i)

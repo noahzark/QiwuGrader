@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import requests
+from requests.adapters import HTTPAdapter
 import json
 from qiwugrader.model.basic_request import BasicRequest
 
@@ -38,18 +39,21 @@ class SingleDialogue(BasicRequest):
 
         self.url = self.to_uri()
 
-        self.session = requests.session()
+        self.session = requests.Session()
+        self.session.mount('http://', HTTPAdapter(pool_connections=128, pool_maxsize=256))
 
     def chat(self, data, max_wait=None):
         if self.threshold and self.threshold > 1:
             return SingleDialogue.DEFAULT_REPLY
 
         payload = encode_str(to_str(self.payload % data))
+
         headers = {}
 
         if self.method == "POST":
             headers['content-type'] = self.type
 
+        r = None
         result = None
         try:
             if self.method == 'GET':
@@ -60,13 +64,16 @@ class SingleDialogue(BasicRequest):
         except requests.exceptions.Timeout:
             self.logger.error("request timeout {0} {1}:{2}".format(self.method, self.host, self.port))
             return SingleDialogue.REQUEST_TIMEOUT
-        except ValueError:
+        except ValueError as e:
             if r:
                 self.logger.info("error decoding: " + r.text)
+            self.logger.exception(e)
             self.logger.error("request value error {0} {1}:{2}".format(self.method, self.host, self.port))
+            return SingleDialogue.ERROR_REPLY
         except requests.exceptions.RequestException as e:
             self.logger.info(e)
             self.logger.error("request error {0} {1}:{2}".format(self.method, self.host, self.port))
+            return SingleDialogue.ERROR_REPLY
         except Exception as e:
             self.logger.error("request exception {0} {1}:{2}".format(self.method, self.host, self.port))
             self.logger.exception(e)
