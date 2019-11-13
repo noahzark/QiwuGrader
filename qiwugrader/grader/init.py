@@ -5,8 +5,6 @@ import sys
 from qiwugrader.grader.compatible import file_encoding
 
 
-log_dir = './logs/'
-
 FORMAT = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'
 # logging
 logging.basicConfig(
