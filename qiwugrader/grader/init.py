@@ -4,6 +4,9 @@ import sys
 
 from qiwugrader.grader.compatible import file_encoding
 
+
+log_dir = './logs/'
+
 FORMAT = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'
 # logging
 logging.basicConfig(
@@ -35,26 +38,24 @@ def init_log_file():
     from datetime import datetime
     time_str = str(datetime.now()).replace(' ', '_').replace(':', '-')
 
-    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0])))
-    os.sys.path.insert(0, parent_dir)
-    path = os.path.abspath(os.path.dirname(sys.argv[0]))
+    path = os.path.abspath(os.getcwd())
     log_path = os.path.join(path, 'logs')
     if not os.path.exists(log_path):
         os.makedirs(log_path)
 
-    grade_report_filename = 'logs/QiwuGrade-{0}.log'.format(time_str)
-    log_path = os.path.join(path, grade_report_filename)
-    report_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
+    grade_report_filename = 'QiwuGrade-{0}.log'.format(time_str)
+    log_file_path = os.path.join(log_path, grade_report_filename)
+    report_log_handler = logging.handlers.RotatingFileHandler(log_file_path, backupCount=50, encoding=file_encoding)
     report_logger.addHandler(report_log_handler)
 
-    grade_log_filename = 'logs/QiwuTest-{0}.log'.format(time_str)
-    log_path = os.path.join(path, grade_log_filename)
-    test_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
+    grade_log_filename = 'QiwuTest-{0}.log'.format(time_str)
+    log_file_path = os.path.join(log_path, grade_log_filename)
+    test_log_handler = logging.handlers.RotatingFileHandler(log_file_path, backupCount=50, encoding=file_encoding)
     test_logger.addHandler(test_log_handler)
 
-    csv_log_filename = 'logs/QiwuTest-{0}.csv'.format(time_str)
-    log_path = os.path.join(path, csv_log_filename)
-    csv_log_handler = logging.handlers.RotatingFileHandler(log_path, backupCount=50, encoding=file_encoding)
+    csv_log_filename = 'QiwuTest-{0}.csv'.format(time_str)
+    log_file_path = os.path.join(log_path, csv_log_filename)
+    csv_log_handler = logging.handlers.RotatingFileHandler(log_file_path, backupCount=50, encoding=file_encoding)
     csv_logger.addHandler(csv_log_handler)
 
     def roll_log_file():
