@@ -46,7 +46,7 @@ class SingleDialogue(BasicRequest):
         if self.threshold and self.threshold > 1:
             return SingleDialogue.DEFAULT_REPLY
 
-        payload = encode_str(to_str(self.payload % data))
+        payload = to_str(self.payload % data)
 
         headers = {}
 
@@ -59,6 +59,7 @@ class SingleDialogue(BasicRequest):
             if self.method == 'GET':
                 r = self.session.get(self.url, params=payload, headers=headers, timeout=max_wait or self.timeout)
             else:
+                payload = encode_str(payload)
                 r = self.session.post(self.url, data=payload, headers=headers, timeout=max_wait or self.timeout)
             result = r.json()
         except requests.exceptions.Timeout:
