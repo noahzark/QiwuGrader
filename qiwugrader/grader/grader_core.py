@@ -59,7 +59,7 @@ class Grader():
         else:
             test_service = pMsgHandler(self.server, test_logger)
 
-        uid = "grader_" + id_generator(10)
+        uid = "grader_" + id_generator(20)
 
         test_service.robot_name = name
 
@@ -145,7 +145,7 @@ class Grader():
                             answer_str = to_str(answer_str)
                             test_logger.info("Answer: " + answer_str)
 
-                        test_logger.info(correct and "Passed" or "Wrong")
+                        test_logger.info((correct and "Passed" or "Wrong") + " for " + uid)
                         test_logger.info("Processed in {:.5f} seconds".format(process_time))
                         test_logger.info("=============")
                     else:
