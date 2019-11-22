@@ -98,4 +98,4 @@ class SingleDialogue(BasicRequest):
                     return result[self.answer_key]
         elif result is None:
             return SingleDialogue.RESULT_NONE_REPLY
-        return SingleDialogue.DEFAULT_REPLY
+        return result
