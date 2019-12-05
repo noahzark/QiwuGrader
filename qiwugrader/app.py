@@ -17,11 +17,18 @@ from qiwugrader.grader.init import report_logger
 
 from qiwugrader.grader.dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.7.4'
+GRADER_VERSION = '1.7.5'
 
 
 def run(test_config_file_name, test_session, test_length):
     test_config = YamlConfigFileHandler(test_config_file_name)
+
+    test_config_id = test_config.get_config('name', test_config.get_config('id', ''))
+    if test_config_file_name != test_config_id + '.yml':
+        report_logger.error(
+            "file name: {} is different from config id/name: {}".format(test_config_file_name, test_config_id)
+        )
+        return
 
     if test_session == 1:  # single session grade
         # init_log_file()
