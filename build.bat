@@ -1,5 +1,5 @@
 @echo off
-pip install wheel
+REM pip install wheel
 
 rmdir dist /S /Q
 
