@@ -2,6 +2,8 @@
 import time
 
 from qiwugrader.request.chat_robot import ChatRobot
+from qiwugrader.request.chat_robot_redis import ChatRobotRedis
+from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
 
 from qiwugrader.grader.compatible import to_str
 
@@ -12,7 +14,7 @@ class pMsgHandler:
 
     robot_name = 'mimi2'
 
-    def __init__(self, server_config, logger):
+    def __init__(self, server_config: YamlConfigFileHandler, logger):
         self.server = server_config
         self.logging = logger
 
@@ -24,7 +26,10 @@ class pMsgHandler:
         self.access_token = ''
         self.token_expire = 0
 
-        self.handler = ChatRobot(self.server.get_config('server'), self.server)
+        if self.server.get_config('server').get('chat_type', None) == 'java':
+            self.handler = ChatRobotRedis(self.server.get_config('server'), self.server)
+        else:
+            self.handler = ChatRobot(self.server.get_config('server'), self.server)
         self.handler.set_logging(self.logging)
 
     # Pre process and returns if we need to handle this message
@@ -51,6 +56,7 @@ class pMsgHandler:
 
     # Process the message, and returns response
     def process_chat(self, from_name, msg, max_wait=None, login_wait=None):
+        start_time = time.time()
 
         result = ''
         skip_first = False
@@ -61,7 +67,7 @@ class pMsgHandler:
         # If token exist, set chat key. Or login to chat robot
         if from_name in self.tokens:
             chat_key = self.tokens[from_name]
-            self.handler.set_chatkey(chat_key)
+            self.handler.set_chat_key(chat_key)
             self.logging.debug('Existed user {0} chat with chatkey {1}'.format(from_name, chat_key))
         else:
             chat_key = self.handler.login(self.robot_name)
@@ -71,7 +77,7 @@ class pMsgHandler:
 
             result = self.handler.wait_for_welcome()
             result_str = to_str(result)
-            self.logging.info('Login Res: {0} Length: {1} for chatkey {2}'.format(result_str, str(len(result_str)), chat_key))
+            self.logging.info('Login Res: {0} Length: {1} for chatkey {2} in {3}'.format(result_str, str(len(result_str)), chat_key, time.time()-start_time))
 
             if login_wait:
                 time.sleep(login_wait)
