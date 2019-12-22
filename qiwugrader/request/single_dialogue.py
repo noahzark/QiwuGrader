@@ -2,7 +2,7 @@
 import requests
 from requests.adapters import HTTPAdapter
 import json
-from qiwugrader.model.basic_request import BasicRequest
+from qiwugrader.request.basic_request import BasicRequest
 import urllib.parse
 
 from qiwugrader.grader.compatible import encode_str, to_str

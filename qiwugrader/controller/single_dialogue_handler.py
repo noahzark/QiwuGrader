@@ -2,7 +2,7 @@
 
 from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
 from qiwugrader.controller.basic_handler import BasicHandler
-from qiwugrader.model.single_dialogue import SingleDialogue
+from qiwugrader.request.single_dialogue import SingleDialogue
 
 from qiwugrader.grader.init import test_logger as logger
 

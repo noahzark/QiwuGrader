@@ -6,9 +6,8 @@ import json
 from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
 from qiwugrader.controller.private_msg_handler import pMsgHandler
 from qiwugrader.controller.single_dialogue_handler import SingleDialogueHandler
-from qiwugrader.model.single_dialogue import SingleDialogue
 
-from qiwugrader.model.string_helper import id_generator
+from qiwugrader.util.string_helper import id_generator
 
 from qiwugrader.grader.init import test_logger
 from qiwugrader.grader.init import report_logger
@@ -17,7 +16,7 @@ from qiwugrader.grader.init import csv_logger
 from qiwugrader.grader.compatible import to_str
 from qiwugrader.grader.compatible import write_utf_bom
 
-from qiwugrader.model.single_dialogue import SingleDialogue
+from qiwugrader.request.single_dialogue import SingleDialogue
 
 try:
     basestring
@@ -57,7 +56,7 @@ class Grader():
         if self.test_type == 'api':
             test_service = SingleDialogueHandler(self.config)
         else:
-            test_service = pMsgHandler(self.server, test_logger)
+            test_service = pMsgHandler(self.config, test_logger)
 
         uid = "grader_" + id_generator(20)
 
@@ -111,7 +110,7 @@ class Grader():
                             correct = True
                 else:
                     answer_str = answer.encode('utf-8')
-                    if response.find(answer_str) != -1:
+                    if response.find(to_str(answer_str)) != -1:
                         correct = True
             else:
                 if response == self.ERROR_REPLY:
@@ -168,7 +167,7 @@ class Grader():
         report_logger.info("{0} grade: {1} / {2}\ntime: {3} avg: {4}".format(name, grade, len(questions), total_time, total_time/len(questions)))
         return grade == len(questions) and True or False, total_time
 
-    def init(self, config):
+    def init(self, config: YamlConfigFileHandler):
         assert(isinstance(config, YamlConfigFileHandler))
         self.config = config
 

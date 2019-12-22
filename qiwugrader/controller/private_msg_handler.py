@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import time
 
-from qiwugrader.model.chat_robot import ChatRobot
+from qiwugrader.request.chat_robot import ChatRobot
 
 from qiwugrader.grader.compatible import to_str
 
@@ -24,7 +24,8 @@ class pMsgHandler:
         self.access_token = ''
         self.token_expire = 0
 
-        self.handler = ChatRobot(self.server, self.logging)
+        self.handler = ChatRobot(self.server.get_config('server'), self.server)
+        self.handler.set_logging(self.logging)
 
     # Pre process and returns if we need to handle this message
     def pre_chat(self, from_name, msg):
