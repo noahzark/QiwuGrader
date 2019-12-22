@@ -4,3 +4,4 @@ pyyaml
 enum34
 srt
 pyqt5
+xlrd

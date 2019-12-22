@@ -50,7 +50,7 @@ setup(
     # 模块的关键词，使用空格分割
     keywords='qiwu qiwugrader',
     # 依赖模块
-    install_requires=['requests', 'pyyaml', 'enum34'],
+    install_requires=['requests', 'pyyaml', 'enum34', 'xlrd'],
     # 分组依赖模块，可使用pip install sampleproject[dev] 安装分组内的依赖
     extras_require={
         'srt': ['srt'],

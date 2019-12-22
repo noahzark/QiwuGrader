@@ -9,7 +9,7 @@ __author__ = 'Feliciano'
 class YamlConfigFileHandler:
     resp_dict = {}
 
-    def __init__(self, filename):
+    def __init__(self, filename: str):
         self.filename = filename
 
         with open_config_file(self.filename) as __fr:

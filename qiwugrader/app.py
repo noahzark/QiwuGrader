@@ -17,7 +17,7 @@ from qiwugrader.grader.init import report_logger
 
 from qiwugrader.grader.dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.7.5'
+GRADER_VERSION = '1.7.6'
 
 
 def run(test_config_file_name, test_session, test_length):

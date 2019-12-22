@@ -2,6 +2,8 @@
 import time
 import re
 import json
+import os
+import xlrd
 
 from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
 from qiwugrader.controller.private_msg_handler import pMsgHandler
@@ -125,7 +127,7 @@ class Grader():
                 csv_string += "," + to_str(response).replace(",", "，")
                 csv_string += "," + to_str(answer_str).replace(",", "，")
                 csv_string += "," + (correct and "Passed" or "Wrong")
-                csv_string += "," + "Processed in {:.5f} seconds".format(process_time)
+                csv_string += "," + "{:.5f}".format(process_time)
                 csv_logger.info(csv_string)
 
             if self.print_info:
@@ -195,7 +197,17 @@ class Grader():
         else:
             self.robots = robots
 
-        self.questions = config.get_config("questions", self.questions)
+        questions_xlsx = config.filename.replace('.yml', '.xlsx')
+        if not os.path.exists(questions_xlsx):
+            self.questions = config.get_config("questions", self.questions)
+        else:
+            workbook = xlrd.open_workbook(questions_xlsx)
+            worksheet = workbook.sheet_by_name(workbook.sheet_names()[0])
+            self.questions = {}
+            for i in range(2, worksheet.nrows):
+                self.questions[i-1] = worksheet.cell_value(i-1, 1)
+            self.print_csv = True
+
         self.answers = config.get_config("answers", self.answers)
 
         configuration = config.get_config("output", {
