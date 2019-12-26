@@ -313,7 +313,9 @@ class Grader():
                     continue
                 if item['name'] == 'query_text':
                     continue
-                slots.append('%s:%s' % (item['name'], item['value']))
+                if item['name'] == 'action_name':
+                    continue
+                slots.append('%s=%s' % (item['name'], item['value']))
             slots.sort()
             extra_data = ' '.join(slots)
         else:
