@@ -17,7 +17,7 @@ __author__ = 'Feliciano'
 
 class ChatRobot(BasicRequest):
 
-    CHAT_KEY_RANDOM_SPLITTER = '@@@'
+    CHAT_KEY_RANDOM_SPLITTER = '___'
     CHAT_KEY_APP_SPLITTER = '###'
 
     MAX_RETRY_TIMES = 5

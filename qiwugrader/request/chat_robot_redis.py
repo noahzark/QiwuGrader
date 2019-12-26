@@ -5,7 +5,7 @@ import time
 import logging
 import json
 
-from qiwugrader.request.basic_request import BasicRequest
+import urllib3
 
 from requests.adapters import HTTPAdapter
 
@@ -28,9 +28,11 @@ class ChatRobotRedis(BasicChatRobot):
         try:
             r = self.session.post(self.to_uri(), json=data, proxies=self.proxy, timeout=timeout)
             return r
+        except urllib3.exceptions.ReadTimeoutError as e:
+            self.logger.info('Failed to request ' + str(e))
         except Exception as e:
-            self.logger.exception(e)
-            return None
+            self.logger.info('Failed to request ' + str(e))
+        return None
 
     def _handle_engine_response(self, r, action):
         if r is None:
@@ -59,10 +61,12 @@ class ChatRobotRedis(BasicChatRobot):
             'format': 'json',
         }
 
-        r = self._send_request(login_data, 3)
+        r = self._send_request(login_data, 5)
         if r is None:
             return None
         res = self._handle_engine_response(r, 'login')
+        if res is None:
+            return None
 
         result = json.loads(res['payload'])
         self.chat_key = str(result['chatEvent']['chat_key'])
@@ -111,7 +115,7 @@ class ChatRobotRedis(BasicChatRobot):
             'format': 'json',
             'waiting_time': max_wait * 1000,
         }
-        r = self._send_request(chat_data, max_wait)
+        r = self._send_request(chat_data, max_wait * 1000)
         res = self._handle_engine_response(r, 'send')
 
         status_code = -1
@@ -149,8 +153,11 @@ class ChatRobotRedis(BasicChatRobot):
 
         r = self._send_request(reply_data)
 
-        if r is None or r.json()['retcode'] != 0:
+        if r is None:
             self.logger.warning('Receive answer action error')
+            return ''
+        elif 'retcode' not in r.json() or r.json()['retcode'] != 0:
+            self.logger.warning('Receive answer action error, no retcode for: ' + r.text)
             return ''
 
         if r.status_code == requests.codes.ok:
