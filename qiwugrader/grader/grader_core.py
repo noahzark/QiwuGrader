@@ -34,7 +34,7 @@ class Grader():
     REQUEST_ERROR_REPLY = SingleDialogue.ERROR_REPLY.encode('utf-8')
 
     def __init__(self):
-        self.config = {}
+        self.config = None
 
         self.server = None
 
@@ -52,20 +52,22 @@ class Grader():
 
         self.robots = None
         self.questions = {}
+        self.sessions = {}
         self.answers = {}
 
-    def test_robot(self, name, questions, answers):
+    def test_robot(self, name, questions, answers, sessions=None):
+        if sessions is None:
+            sessions = {}
+
         if self.test_type == 'api':
             test_service = SingleDialogueHandler(self.config)
         else:
             test_service = pMsgHandler(self.config, test_logger)
 
         uid = "grader_" + id_generator(20)
+        last_session = 1
 
         test_service.robot_name = name
-
-        if self.print_csv:
-            write_utf_bom()
 
         # items_op = getattr(questions, "iteritems", None)
         # question_items = callable(items_op) and questions.iteritems() or questions.items()
@@ -73,6 +75,10 @@ class Grader():
         grade = 0
         total_time = 0
         for i, question in questions.items():
+            if sessions.get(i, -1) != last_session:
+                uid = "grader_" + id_generator(20)
+                last_session = sessions.get(i)
+
             process_time = time.time()
             # turn question into a string and handle chat
             if type(question) == int:
@@ -80,6 +86,10 @@ class Grader():
             else:
                 question_str = question
             response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
+            data = None
+            if self.print_csv:
+                data, response = self.handle_string(response)
+
             chat_key = None
             if hasattr(test_service, 'tokens') and uid in test_service.tokens:
                 chat_key = test_service.tokens[uid]
@@ -95,6 +105,8 @@ class Grader():
 
             answer_str = 'No answer found for question {0}'.format(i)
             if answers and i in answers:
+                check_target = data or response
+
                 answer = answers[i]
                 correct = False
 
@@ -102,20 +114,20 @@ class Grader():
                     if 'multi' in answer:
                         answer_str = json.dumps(answer, ensure_ascii=False).encode('utf-8')
                         for j, item in enumerate(answer['multi']):
-                            if response.find(item.encode('utf-8')) != -1:
+                            if check_target.find(item.encode('utf-8')) != -1:
                                 correct = True
                                 break
                     if 'regex' in answer:
                         answer_str = answer['regex'].encode('utf-8')
-                        match_obj = re.match(answer_str, response)
+                        match_obj = re.match(answer_str, check_target)
                         if match_obj:
                             correct = True
                 else:
                     answer_str = answer.encode('utf-8')
-                    if response.find(to_str(answer_str)) != -1:
+                    if check_target.find(to_str(answer_str)) != -1:
                         correct = True
             else:
-                if response == self.ERROR_REPLY:
+                if check_target == self.ERROR_REPLY:
                     correct = False
 
             if correct:
@@ -123,18 +135,22 @@ class Grader():
             total_time += process_time
 
             if self.print_csv:
-                csv_string = "Question {0},{1}".format(i, to_str(question.encode('utf-8')).replace(",", "，"))
+                csv_string = str(last_session)
+                csv_string += ", Question {0}".format(i, )
+                csv_string += "," + to_str(question.encode('utf-8')).replace(",", "，")
                 csv_string += "," + to_str(response).replace(",", "，")
                 csv_string += "," + to_str(answer_str).replace(",", "，")
                 csv_string += "," + (correct and "Passed" or "Wrong")
                 csv_string += "," + "{:.5f}".format(process_time)
+                if data:
+                    csv_string += "," + data
                 csv_logger.info(csv_string)
 
             if self.print_info:
                 if self.print_conversation:
                     if self.print_details:
                         question_str = to_str(question_str.encode('utf-8'))
-                        test_logger.info("Question {0}: {1}".format(i, question_str))
+                        test_logger.info("Session {0} Question {1}: {2}".format(last_session, i, question_str))
 
                         response = to_str(response)
                         if chat_key:
@@ -200,15 +216,17 @@ class Grader():
         questions_xlsx = config.filename.replace('.yml', '.xlsx')
         if not os.path.exists(questions_xlsx):
             self.questions = config.get_config("questions", self.questions)
+            self.answers = config.get_config("answers", self.answers)
         else:
             workbook = xlrd.open_workbook(questions_xlsx)
             worksheet = workbook.sheet_by_name(workbook.sheet_names()[0])
             self.questions = {}
-            for i in range(2, worksheet.nrows):
+            for i in range(2, worksheet.nrows+1):
+                self.sessions[i-1] = int(worksheet.cell_value(i-1, 0))
                 self.questions[i-1] = worksheet.cell_value(i-1, 1)
+                answer = worksheet.cell_value(i-1, 2)
+                self.answers[i-1] = answer
             self.print_csv = True
-
-        self.answers = config.get_config("answers", self.answers)
 
         configuration = config.get_config("output", {
             'print_info': self.print_info,
@@ -242,10 +260,60 @@ class Grader():
                 test_logger.info("Testing robot {0}".format(robot))
 
             try:
-                success, time_used = self.test_robot(robot, self.questions, self.answers)
+                success, time_used = self.test_robot(robot, self.questions, self.answers, self.sessions)
                 success_count += success and 1 or 0
                 total_time += success and time_used or 0
             except Exception as e:
                 test_logger.exception(e)
 
         return success_count, total_time
+
+    def handle_string(self, result):
+        from qiwugrader.util.string_helper import StringExtractor, AnswerTokenType
+        import requests
+        extra_data = {}
+
+        # extract image data
+        pic_token, result = StringExtractor.extract_type(AnswerTokenType.IMAGE_ATTACH, result)
+
+        # extract extra data
+        data_token, result = StringExtractor.extract_type(AnswerTokenType.QUERY_ATTACH, result)
+        if data_token:
+            data_url = self.config.get_config('data_url', None)
+            if data_url:
+                extra_data = requests.get(
+                    data_url,
+                    headers={'key': data_token}
+                ).json()
+            else:
+                test_logger.warning("No data url found")
+
+        data, result = StringExtractor.extract_json(result)
+        if data:
+            extra_data.update(json.loads(data))
+
+        result = StringExtractor.extract_dialogue_stat(result, extra_data)
+
+        result = StringExtractor.listen_silence(result, extra_data)
+
+        result = StringExtractor.end_session(result, extra_data)
+
+        result = StringExtractor.cut_answer(result)
+
+        business, result = StringExtractor.extract_business_identify(result)
+
+        if 'slots' in extra_data:
+            extra_data = extra_data['slots']
+            slots = []
+            for item in extra_data:
+                if item['name'] == 'chat_key':
+                    continue
+                if item['name'] == 'query_text':
+                    continue
+                slots.sort()
+                slots.append('%s:%s' % (item['name'], item['value']))
+            extra_data = ' '.join(slots)
+        else:
+            extra_data = str(extra_data)
+
+        return extra_data, result
