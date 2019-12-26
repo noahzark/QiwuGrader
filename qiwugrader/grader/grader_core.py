@@ -273,6 +273,7 @@ class Grader():
         from qiwugrader.util.string_helper import StringExtractor, AnswerTokenType
         import requests
         extra_data = {}
+        result = to_str(result)
 
         # extract image data
         pic_token, result = StringExtractor.extract_type(AnswerTokenType.IMAGE_ATTACH, result)

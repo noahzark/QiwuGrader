@@ -76,7 +76,7 @@ class ChatRobot(BasicRequest):
     def get_debug_info(self):
         return 'Robot {0} at server {1}'.format(self.username, self.host)
 
-    def _send_request(self, data, timeout=1):
+    def _send_request(self, data, timeout=5):
         # return self._request_engine(data, timeout)
 
         glet = gevent.spawn(self._request_engine, data, timeout)
