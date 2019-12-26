@@ -81,7 +81,7 @@ class Grader():
                 question_str = question
             response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
             chat_key = None
-            if hasattr(test_service, 'tokens'):
+            if hasattr(test_service, 'tokens') and uid in test_service.tokens:
                 chat_key = test_service.tokens[uid]
             process_time = time.time() - process_time
 
