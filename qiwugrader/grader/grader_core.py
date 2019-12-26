@@ -104,7 +104,7 @@ class Grader():
                 correct = False
 
             answer_str = 'No answer found for question {0}'.format(i)
-            if answers and i in answers:
+            if answers and i in answers and answers[i]:
                 check_target = data or response
 
                 answer = answers[i]
@@ -279,7 +279,7 @@ class Grader():
         # extract extra data
         data_token, result = StringExtractor.extract_type(AnswerTokenType.QUERY_ATTACH, result)
         if data_token:
-            data_url = self.config.get_config('data_url', None)
+            data_url = self.config.get_config('data_url', 'http://robot-service-test.chewrobot.com/api/chat/data')
             if data_url:
                 extra_data = requests.get(
                     data_url,
