@@ -71,6 +71,9 @@ class pMsgHandler:
             self.logging.debug('Existed user {0} chat with chatkey {1}'.format(from_name, chat_key))
         else:
             chat_key = self.handler.login(self.robot_name)
+            if chat_key is None:
+                return result
+
             self.tokens[from_name] = chat_key
             skip_first = True
             self.logging.debug('New user {0} login with chatkey {1}'.format(from_name, chat_key))
