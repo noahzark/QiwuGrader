@@ -127,7 +127,7 @@ class Grader():
                     if check_target.find(to_str(answer_str)) != -1:
                         correct = True
             else:
-                if check_target == self.ERROR_REPLY:
+                if response == self.ERROR_REPLY:
                     correct = False
 
             if correct:
@@ -224,8 +224,9 @@ class Grader():
             for i in range(2, worksheet.nrows+1):
                 self.sessions[i-1] = int(worksheet.cell_value(i-1, 0))
                 self.questions[i-1] = worksheet.cell_value(i-1, 1)
-                answer = worksheet.cell_value(i-1, 2)
-                self.answers[i-1] = answer
+                if worksheet.ncols > 2:
+                    answer = worksheet.cell_value(i-1, 2)
+                    self.answers[i-1] = answer
             self.print_csv = True
 
         configuration = config.get_config("output", {
