@@ -136,7 +136,8 @@ class Grader():
 
             if self.print_csv:
                 csv_string = str(last_session)
-                csv_string += ", Question {0}".format(i, )
+                csv_string += ",Question {0}".format(i)
+                csv_string += "," + uid
                 csv_string += "," + to_str(question.encode('utf-8')).replace(",", "，")
                 csv_string += "," + to_str(response).replace(",", "，")
                 csv_string += "," + to_str(answer_str).replace(",", "，")
@@ -312,8 +313,8 @@ class Grader():
                     continue
                 if item['name'] == 'query_text':
                     continue
-                slots.sort()
                 slots.append('%s:%s' % (item['name'], item['value']))
+            slots.sort()
             extra_data = ' '.join(slots)
         else:
             extra_data = str(extra_data)
