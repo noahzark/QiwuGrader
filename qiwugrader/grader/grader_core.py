@@ -315,6 +315,8 @@ class Grader():
                     continue
                 if item['name'] == 'action_name':
                     continue
+                if item['name'] == 'bot_name':
+                    continue
                 slots.append('%s=%s' % (item['name'], item['value']))
             slots.sort()
             extra_data = ' '.join(slots)
