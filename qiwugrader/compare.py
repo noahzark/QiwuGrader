@@ -44,7 +44,8 @@ def compare(infile='test.csv', print_debug=True):
                             passed = False
                             break
                 row[6] = passed and "Passed" or "Wrong"
-                print(row[6])
+                if print_debug:
+                    print(row[6])
                 writer.writerow(row)
 
                 if passed:
