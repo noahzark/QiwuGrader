@@ -105,7 +105,7 @@ class Grader():
 
             answer_str = 'No answer found for question {0}'.format(i)
             if answers and i in answers and answers[i]:
-                check_target = data or response
+                check_target = data or to_str(response)
 
                 answer = answers[i]
                 correct = False
