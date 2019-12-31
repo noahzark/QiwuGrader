@@ -17,14 +17,14 @@ from qiwugrader.grader.init import report_logger
 
 from qiwugrader.grader.dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.8.1'
+GRADER_VERSION = '1.8.2'
 
 
 def run(test_config_file_name, test_session, test_length):
     test_config = YamlConfigFileHandler(test_config_file_name)
 
     test_config_id = test_config.get_config('name', test_config.get_config('id', ''))
-    if test_config_file_name != test_config_id + '.yml':
+    if test_config_file_name.find("test_config_id") == -1:
         report_logger.error(
             "file name: {} is different from config id/name: {}".format(test_config_file_name, test_config_id)
         )
