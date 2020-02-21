@@ -77,7 +77,7 @@ class Grader():
         for i, question in questions.items():
             if sessions.get(i, -1) != last_session:
                 uid = "grader_" + id_generator(20)
-                last_session = sessions.get(i)
+                last_session = sessions.get(i, -1)
 
             process_time = time.time()
             # turn question into a string and handle chat
@@ -171,7 +171,7 @@ class Grader():
                         if not correct:
                             test_logger.info("Answer: " + to_str(response))
                 elif not correct:
-                    test_logger.warning("Q {0} Wrong answer: {1}".format(i, to_str(response)))
+                    test_logger.warning("Q {0} WA vc: {1}".format(i, to_str(response)))
                     # print ("Q {0} Wrong answer: {1}".format(i, response))
 
             if not correct and self.suspend_on_error:
@@ -185,6 +185,34 @@ class Grader():
 
         report_logger.info("{0} grade: {1} / {2}\ntime: {3} avg: {4}".format(name, grade, len(questions), total_time, total_time/len(questions)))
         return grade == len(questions) and True or False, total_time
+
+    def init_xlsx(self, input_file):
+        workbook = xlrd.open_workbook(input_file)
+        worksheet = workbook.sheet_by_name(workbook.sheet_names()[0])
+        self.questions = {}
+        for i in range(2, worksheet.nrows + 1):
+            self.sessions[i - 1] = int(worksheet.cell_value(i - 1, 0))
+            self.questions[i - 1] = worksheet.cell_value(i - 1, 1)
+            if worksheet.ncols > 2:
+                answer = worksheet.cell_value(i - 1, 2)
+                self.answers[i - 1] = answer
+        self.print_csv = True
+
+    def init_json(self, input_file):
+        with open(input_file, encoding='utf-8') as fp:
+            input_json = json.load(fp)
+            i = 1
+            for question in input_json:
+                labels = question['labels']
+                self.questions[i] = question['sentence']
+
+                nlus = []
+                for label in labels:
+                    nlus.append('{}={} '.format(label['sign'][0]['type'], label['sign'][0]['text']))
+
+                self.answers[i] = ' '.join(nlus)
+
+                i += 1
 
     def init(self, config: YamlConfigFileHandler):
         assert(isinstance(config, YamlConfigFileHandler))
@@ -215,20 +243,15 @@ class Grader():
             self.robots = robots
 
         questions_xlsx = config.filename.replace('.yml', '.xlsx')
-        if not os.path.exists(questions_xlsx):
+        questions_json = config.filename.replace('.yml', '.json')
+
+        if os.path.exists(questions_xlsx):
+            self.init_xlsx(questions_xlsx)
+        elif os.path.exists(questions_json):
+            self.init_json(questions_json)
+        else:
             self.questions = config.get_config("questions", self.questions)
             self.answers = config.get_config("answers", self.answers)
-        else:
-            workbook = xlrd.open_workbook(questions_xlsx)
-            worksheet = workbook.sheet_by_name(workbook.sheet_names()[0])
-            self.questions = {}
-            for i in range(2, worksheet.nrows+1):
-                self.sessions[i-1] = int(worksheet.cell_value(i-1, 0))
-                self.questions[i-1] = worksheet.cell_value(i-1, 1)
-                if worksheet.ncols > 2:
-                    answer = worksheet.cell_value(i-1, 2)
-                    self.answers[i-1] = answer
-            self.print_csv = True
 
         configuration = config.get_config("output", {
             'print_info': self.print_info,

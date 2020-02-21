@@ -80,7 +80,7 @@ class pMsgHandler:
 
             result = self.handler.wait_for_welcome()
             result_str = to_str(result)
-            self.logging.info('Login Res: {0} Length: {1} for chatkey {2} in {3}'.format(result_str, str(len(result_str)), chat_key, time.time()-start_time))
+            self.logging.debug('Login Res: {0} Length: {1} for chatkey {2} in {3}'.format(result_str, str(len(result_str)), chat_key, time.time()-start_time))
 
             if login_wait:
                 time.sleep(login_wait)
