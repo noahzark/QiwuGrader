@@ -16,7 +16,9 @@ from qiwugrader.grader.init import report_logger
 from qiwugrader.grader.init import csv_logger
 
 from qiwugrader.grader.compatible import to_str
-from qiwugrader.grader.compatible import write_utf_bom
+
+from qiwugrader.util.string_helper import StringExtractor, AnswerTokenType
+import requests
 
 from qiwugrader.request.single_dialogue import SingleDialogue
 
@@ -87,7 +89,8 @@ class Grader():
                 question_str = question
             response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
             data = None
-            if self.print_csv:
+            if response.find(AnswerTokenType.QUERY_ATTACH.value) != -1 \
+                    or response.find(StringExtractor.DATA_ATTACH_SEPARATOR):
                 data, response = self.handle_string(response)
 
             chat_key = None
@@ -105,7 +108,11 @@ class Grader():
 
             answer_str = 'No answer found for question {0}'.format(i)
             if answers and i in answers and answers[i]:
-                check_target = data or to_str(response)
+                response = to_str(response)
+                if data:
+                    temp_res = response
+                    response = data
+                    data = temp_res
 
                 answer = answers[i]
                 correct = False
@@ -114,17 +121,17 @@ class Grader():
                     if 'multi' in answer:
                         answer_str = json.dumps(answer, ensure_ascii=False).encode('utf-8')
                         for j, item in enumerate(answer['multi']):
-                            if check_target.find(item.encode('utf-8')) != -1:
+                            if response.find(item.encode('utf-8')) != -1:
                                 correct = True
                                 break
                     if 'regex' in answer:
                         answer_str = answer['regex'].encode('utf-8')
-                        match_obj = re.match(answer_str, check_target)
+                        match_obj = re.match(answer_str, response)
                         if match_obj:
                             correct = True
                 else:
                     answer_str = answer.encode('utf-8')
-                    if check_target.find(to_str(answer_str)) != -1:
+                    if response.find(to_str(answer_str)) != -1:
                         correct = True
             else:
                 if response == self.ERROR_REPLY:
@@ -210,9 +217,81 @@ class Grader():
                 for label in labels:
                     nlus.append('{}={} '.format(label['sign'][0]['type'], label['sign'][0]['text']))
 
-                self.answers[i] = ' '.join(nlus)
+                self.answers[i] = ' '.join(nlus).strip()
 
                 i += 1
+
+    def init_txt(self, input_file):
+        with open(input_file, encoding='utf-8') as fp:
+            input_txt = fp.readlines()
+
+        slot_regex = re.compile(r'<([a-zA-Z_]*)>')
+        slots = {}
+
+        if input_txt:
+            for l in input_txt:
+                ss = slot_regex.findall(l)
+                for s in ss:
+                    slots[s] = []
+
+        print(slots)
+        workbook = xlrd.open_workbook(input_file.replace('txt', 'config.xlsx'))
+        worksheet = workbook.sheet_by_name(workbook.sheet_names()[0])
+
+        for col in range(0, worksheet.ncols):
+            target = worksheet.cell_value(0, col)
+
+            if target not in slots:
+                print('useless column:', target)
+                continue
+
+            for row in range(1, worksheet.nrows):
+                v = worksheet.cell_value(row, col)
+                if not v:
+                    break
+                slots[target].append(v)
+
+        for slot in slots:
+            if len(slots[slot]) == 0:
+                print('none value for <' + slot + '>')
+
+        import time
+        start = time.time()
+        sentences = {}
+
+        for l in input_txt:
+            def func(temp_s, answer_s=''):
+                temp_ss = slot_regex.findall(temp_s)
+                if len(temp_ss) == 0:
+                    sentences[temp_s] = answer_s.strip()
+                else:
+                    temp_slot = temp_ss[0]
+                    targets = slots[temp_slot]
+                    for temp_target in targets:
+                        func(temp_s.replace('<' + temp_slot + '>', str(temp_target)),
+                             answer_s + ' {}={}'.format(temp_slot, temp_target))
+
+            func(l.strip())
+
+        print('generated', len(sentences), 'sentences')
+        print('used', time.time() - start, 'seconds')
+        start = time.time()
+
+        csv_format = '{},{},{}\n'
+        with open(input_file.replace('txt', 'csv'), mode='w', encoding='utf-8') as f:
+            f.write(csv_format.format('session', 'ask', 'answer'))
+
+            i = 1
+            for sentence in sentences:
+                self.questions[i] = sentence
+                self.answers[i] = sentences[sentence]
+
+                f.write(csv_format.format(i, sentence, sentences[sentence]))
+
+                i += 1
+
+        print('wrote', i, 'lines')
+        print('used', time.time() - start, 'seconds')
 
     def init(self, config: YamlConfigFileHandler):
         assert(isinstance(config, YamlConfigFileHandler))
@@ -244,11 +323,14 @@ class Grader():
 
         questions_xlsx = config.filename.replace('.yml', '.xlsx')
         questions_json = config.filename.replace('.yml', '.json')
+        questions_txt = config.filename.replace('.yml', '.txt')
 
         if os.path.exists(questions_xlsx):
             self.init_xlsx(questions_xlsx)
         elif os.path.exists(questions_json):
             self.init_json(questions_json)
+        elif os.path.exists(questions_txt):
+            self.init_txt(questions_txt)
         else:
             self.questions = config.get_config("questions", self.questions)
             self.answers = config.get_config("answers", self.answers)
@@ -294,8 +376,6 @@ class Grader():
         return success_count, total_time
 
     def handle_string(self, result):
-        from qiwugrader.util.string_helper import StringExtractor, AnswerTokenType
-        import requests
         extra_data = {}
         result = to_str(result)
 
