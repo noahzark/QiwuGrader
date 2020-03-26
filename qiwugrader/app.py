@@ -17,7 +17,7 @@ from qiwugrader.grader.init import report_logger
 
 from qiwugrader.grader.dns_cache import _set_dns_cache
 
-GRADER_VERSION = '1.8.5'
+GRADER_VERSION = '1.8.6'
 
 
 def run(test_config_file_name, test_session, test_length):
@@ -36,6 +36,11 @@ def run(test_config_file_name, test_session, test_length):
         grader = Grader()
         grader.init(test_config)
         grader.test()
+    elif test_length == -1: # single session several round grade
+        for i in range(1, test_session):
+            grader = Grader()
+            grader.init(test_config)
+            grader.test()
     elif test_session > 1:  # multi session grade
         # calculate thread spawn interval
         spawn_interval = test_length / (test_session * 1.0)

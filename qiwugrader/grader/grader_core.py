@@ -89,9 +89,13 @@ class Grader():
                 question_str = question
             response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
             data = None
+            response = to_str(response)
             if response.find(AnswerTokenType.QUERY_ATTACH.value) != -1 \
                     or response.find(StringExtractor.DATA_ATTACH_SEPARATOR):
-                data, response = self.handle_string(response)
+                try:
+                    data, response = self.handle_string(response)
+                except Exception:
+                    test_logger.info("Failed to retrive data")
 
             chat_key = None
             if hasattr(test_service, 'tokens') and uid in test_service.tokens:
@@ -109,10 +113,10 @@ class Grader():
             answer_str = 'No answer found for question {0}'.format(i)
             if answers and i in answers and answers[i]:
                 response = to_str(response)
-                if data:
-                    temp_res = response
-                    response = data
-                    data = temp_res
+                # if data:
+                #     temp_res = response
+                #     response = data
+                #     data = temp_res
 
                 answer = answers[i]
                 correct = False
@@ -162,9 +166,8 @@ class Grader():
 
                         response = to_str(response)
                         if chat_key:
-                            test_logger.info("Chatkey: {1} Response: {0}".format(response, chat_key))
-                        else:
-                            test_logger.info("Response :" + response)
+                            test_logger.info("Chatkey: {0})".format(chat_key))
+                        test_logger.info("Response :" + response)
 
                         if self.print_correct_answer or not correct:
                             answer_str = to_str(answer_str)
@@ -197,8 +200,13 @@ class Grader():
         workbook = xlrd.open_workbook(input_file)
         worksheet = workbook.sheet_by_name(workbook.sheet_names()[0])
         self.questions = {}
+        last_session = 0
         for i in range(2, worksheet.nrows + 1):
-            self.sessions[i - 1] = int(worksheet.cell_value(i - 1, 0))
+            session_cell = worksheet.cell_value(i - 1, 0)
+            if session_cell:
+                last_session = int(session_cell)
+            self.sessions[i - 1] = last_session
+
             self.questions[i - 1] = worksheet.cell_value(i - 1, 1)
             if worksheet.ncols > 2:
                 answer = worksheet.cell_value(i - 1, 2)
