@@ -155,6 +155,7 @@ class Grader():
                 csv_string += "," + (correct and "Passed" or "Wrong")
                 csv_string += "," + "{:.5f}".format(process_time)
                 if data:
+                    csv_string += "," + str(len(data))
                     csv_string += "," + data
                 csv_logger.info(csv_string)
 
@@ -393,12 +394,13 @@ class Grader():
         # extract extra data
         data_token, result = StringExtractor.extract_type(AnswerTokenType.QUERY_ATTACH, result)
         if data_token:
-            data_url = self.config.get_config('data_url', 'http://robot-service-test.chewrobot.com/api/chat/data')
+            data_url = self.config.get_config('data_url', 'http://121.37.229.58:18001/api/chat/data')
             if data_url:
-                extra_data = requests.get(
+                r = requests.get(
                     data_url,
                     headers={'key': data_token}
-                ).json()
+                )
+                extra_data = r.json()
             else:
                 test_logger.warning("No data url found")
 
