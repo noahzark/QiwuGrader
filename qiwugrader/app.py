@@ -105,7 +105,7 @@ def run(test_config_file_name, test_session, test_length):
         for grader_handler in threads:
             grader_handler.join()
 
-        questions_count = success_count.value() * len(test_config.get_config("questions"))
+        questions_count = success_count.value() * len(self.q)
         report_logger.info(
             "Result: {0} / {1} passed. Total time: {2}\nSuccess time: {3} Passed: {4} Success avg: {5}".format(
                 success_count.value(), int(session_count * session_per_handler),
