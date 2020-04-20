@@ -394,7 +394,7 @@ class Grader():
         # extract extra data
         data_token, result = StringExtractor.extract_type(AnswerTokenType.QUERY_ATTACH, result)
         if data_token:
-            data_url = self.config.get_config('data_url', 'http://121.37.229.58:18001/api/chat/data')
+            data_url = self.config.get_config('data_url', None)
             if data_url:
                 r = requests.get(
                     data_url,
