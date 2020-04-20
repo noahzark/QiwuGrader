@@ -53,10 +53,10 @@ class SingleDialogue(BasicRequest):
 
         if self.method == "POST":
             headers['content-type'] = self.type
-            if self.type.find('urlencoded') != -1:
-                form = urllib.parse.parse_qs(payload)
-                form['chat_key'] = [data['uid']]
-                payload = urllib.parse.urlencode(form)
+            # if self.type.find('urlencoded') != -1:
+            #     form = urllib.parse.parse_qs(payload)
+            #     form['chat_key'] = [data['uid']]
+            #     payload = urllib.parse.urlencode(form)
 
         r = None
         result = None
