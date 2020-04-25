@@ -27,6 +27,9 @@ class GraderSkeleton:
     def grade(self):
         pass
 
+    def get_question_number(self):
+        return 0
+
 
 class GraderThread(GraderSkeleton, threading.Thread):
 
@@ -56,6 +59,9 @@ class GraderThread(GraderSkeleton, threading.Thread):
             if self.loop > 0:
                 sleep(self.spawn_interval)
 
+    def get_question_number(self):
+        return len(self.grader.questions)
+
 
 class GraderProcess(GraderSkeleton, multiprocessing.Process):
 
@@ -66,6 +72,8 @@ class GraderProcess(GraderSkeleton, multiprocessing.Process):
         # use an internal counter to reduce global success counter locks
         self.internal_counter = SharedCounter()
         self.internal_timer = SharedCounter(val_type='d')
+
+        self.question_count = 0
 
     def grade(self):
         # warm up threads
@@ -78,6 +86,7 @@ class GraderProcess(GraderSkeleton, multiprocessing.Process):
 
             threads.append(grader_thread)
             session_count += 1
+            self.question_count = grader_thread.get_question_number()
 
         # do real grade
         for grader_thread in threads:
@@ -96,3 +105,6 @@ class GraderProcess(GraderSkeleton, multiprocessing.Process):
 
     def run(self):
         self.grade()
+
+    def get_question_number(self):
+        return self.question_count
