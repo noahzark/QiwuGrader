@@ -30,7 +30,12 @@ def run(test_config_file_name, test_session, test_length):
         )
         return
 
-    if test_session == 1:  # single session grade
+    if test_session == -1:  # forever stable test
+        while True:
+            grader = Grader()
+            grader.init(test_config)
+            grader.test()
+    elif test_session == 1:  # single session grade
         # init_log_file()
 
         grader = Grader()
