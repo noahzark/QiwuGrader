@@ -28,7 +28,7 @@ except NameError:
     basestring = str
 
 
-class Grader():
+class Grader:
 
     ERROR_REPLY = u'服务器通信错误。'.encode('utf-8')
     TIMEOUT_REPLY = u'请让我再想想。'.encode('utf-8')
@@ -57,6 +57,8 @@ class Grader():
         self.sessions = {}
         self.answers = {}
 
+        self.uid_prefix = 'Console.Test.'
+
     def test_robot(self, name, questions, answers, sessions=None):
         if sessions is None:
             sessions = {}
@@ -66,7 +68,7 @@ class Grader():
         else:
             test_service = pMsgHandler(self.config, test_logger)
 
-        uid = "grader_" + id_generator(20)
+        uid = self.uid_prefix + id_generator(20)
         last_session = 1
 
         test_service.robot_name = name
@@ -78,7 +80,7 @@ class Grader():
         total_time = 0
         for i, question in questions.items():
             if sessions.get(i, -1) != last_session:
-                uid = "grader_" + id_generator(20)
+                uid = self.uid_prefix + id_generator(20)
                 last_session = sessions.get(i, -1)
 
             process_time = time.time()
