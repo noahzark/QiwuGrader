@@ -57,14 +57,11 @@ def run(test_config_file_name, test_session, test_length):
         Handler_Class = GraderThread
 
         # use process to speed up grade
-        if test_session > 512:
+        if test_session > 512 or spawn_interval < 0.5:
             use_process = True
             handler_count = multiprocessing.cpu_count()
-            session_per_handler = test_session / handler_count
+            session_per_handler = test_session // handler_count
             Handler_Class = GraderProcess
-
-        # count the number of spawned sessions
-        session_count = 0
 
         # thread safe success counter
         success_count = SharedCounter()
@@ -85,13 +82,16 @@ def run(test_config_file_name, test_session, test_length):
 
         warm_up_time = time.time()
         # Spawn threads
-        while session_count < handler_count:
+        sessions_to_distribute = test_session
+        while sessions_to_distribute > 0:
+            session_per_process = sessions_to_distribute > session_per_handler and session_per_handler or sessions_to_distribute
             grader_handler = Handler_Class(success_count, test_config, success_time_count,
-                                           loop=session_per_handler, spawn_interval=spawn_interval * handler_count)
+                                           loop=session_per_process,
+                                           spawn_interval=spawn_interval * handler_count)
             grader_handler.init()
 
             threads.append(grader_handler)
-            session_count += 1
+            sessions_to_distribute -= session_per_process
 
         report_logger.info("Warm up process finished in {0} seconds".format(time.time() - warm_up_time))
 
@@ -104,7 +104,7 @@ def run(test_config_file_name, test_session, test_length):
             sleep(spawn_interval)
 
         report_logger.info("{0} sessions started in {1}".format(
-            int(session_count * session_per_handler), time.time() - launch_time))
+            int(test_session), time.time() - launch_time))
 
         # Wait for all threads to finish
         for grader_handler in threads:
@@ -113,7 +113,7 @@ def run(test_config_file_name, test_session, test_length):
         questions_count = success_count.value() * grader_handler.get_question_number()
         report_logger.info(
             "Result: {0} / {1} passed. Total time: {2}\nSuccess time: {3} Passed: {4} Success avg: {5}".format(
-                success_count.value(), int(session_count * session_per_handler),
+                success_count.value(), int(test_session),
                 time.time() - process_time,
                 success_time_count.value(),
                 questions_count,
