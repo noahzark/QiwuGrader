@@ -400,7 +400,8 @@ class Grader:
             if data_url:
                 r = requests.get(
                     data_url,
-                    headers={'key': data_token}
+                    headers={'key': data_token},
+                    timeout=2
                 )
                 extra_data = r.json()
             else:
