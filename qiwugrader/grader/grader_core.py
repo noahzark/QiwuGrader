@@ -359,6 +359,8 @@ class Grader:
         self.print_correct_answer = configuration.get('print_correct_answer', self.print_correct_answer)
         self.print_csv = configuration.get('print_csv', self.print_csv)
 
+        self.uid_prefix = config.get_config('uid_prefix', self.uid_prefix)
+
         if self.questions and len(self.questions) > 0:
             report_logger.info("grader ready, there are {0} questions".format(len(self.questions)))
 
