@@ -80,22 +80,23 @@ class pMsgHandler:
 
             result = self.handler.wait_for_welcome()
             result_str = to_str(result)
-            self.logging.debug('Login Res: {0} Length: {1} for chatkey {2} in {3}'.format(result_str, str(len(result_str)), chat_key, time.time()-start_time))
+            self.logging.info('<process_chat>[{3}] Login Res: {0} Length: {1} for chatkey {2}'.format(result_str, str(len(result_str)), chat_key, time.time()-start_time))
 
             if login_wait:
                 time.sleep(login_wait)
 
-        self.logging.debug('User ask: {0} with chatkey'.format(msg.encode('utf-8'), chat_key))
-
-        if skip_first and len(result) != 0:
-            time.sleep(self.handler.wait_duration)
+        self.logging.info('<process_chat>[{0}] User Ask with chatkey {1}'.format(time.time() - start_time, chat_key))
 
         # Send question
         result = self.handler.chat_with_check(msg)
 
+        self.logging.info('<process_chat>[{0}] User Ask {1}'.format(time.time() - start_time, result))
+
         # If send action doesn't have reply, wait for a reply
         if len(result) == 0:
             result = self.handler.wait_for_reply()
+
+        self.logging.info('<process_chat>[{0}] Got Answer {1}'.format(time.time() - start_time, result))
 
         # Post process result string
         '''
@@ -109,12 +110,13 @@ class pMsgHandler:
         return result
 
     def handle_chat(self, from_name, msg, login_wait=None):
+        start = time.time()
         # Pre process and check if we really need to handle this message
         if self.pre_chat(from_name, msg):
             # Process the message and give a response
             result = self.process_chat(from_name, msg, login_wait=login_wait)
 
-            self.logging.debug('Robot Response: {0} for chatkey {1}'.format(result, from_name))
+            self.logging.debug('Robot Response: {0} for chatkey {1} in {2}'.format(result, from_name, time.time() - start))
 
             if result and result != '':
                 return result

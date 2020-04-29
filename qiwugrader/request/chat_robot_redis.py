@@ -14,7 +14,7 @@ from qiwugrader.request.chat_robot import ChatRobot as BasicChatRobot
 __author__ = 'Feliciano'
 
 sessions = requests.Session()
-sessions.mount('http://', HTTPAdapter(pool_connections=128, pool_maxsize=256))
+sessions.mount('http://', HTTPAdapter(pool_connections=1024, pool_maxsize=2048))
 
 
 class ChatRobotRedis(BasicChatRobot):
@@ -27,6 +27,7 @@ class ChatRobotRedis(BasicChatRobot):
     def _request_engine(self, data, timeout=1):
         try:
             r = self.session.post(self.to_uri(), json=data, proxies=self.proxy, timeout=timeout)
+            # self.logger.info('<chat_robot_redis> elapsed {} {} {}'.format(data['action'], r.elapsed.total_seconds(), data['chat_key']))
             return r
         except urllib3.exceptions.ReadTimeoutError as e:
             self.logger.info('Failed to request ' + str(e))
@@ -85,7 +86,7 @@ class ChatRobotRedis(BasicChatRobot):
             'waiting_time': self.max_wait * 1000,
         }
 
-        r = self._send_request(login_data, self.max_wait * 1000)
+        r = self._send_request(login_data, self.max_wait)
         res = self._handle_engine_response(r, 'login')
         if res:
             result = json.loads(res['payload'])
@@ -115,7 +116,7 @@ class ChatRobotRedis(BasicChatRobot):
             'format': 'json',
             'waiting_time': max_wait * 1000,
         }
-        r = self._send_request(chat_data, max_wait * 1000)
+        r = self._send_request(chat_data, max_wait)
         res = self._handle_engine_response(r, 'send')
 
         status_code = -1
@@ -124,12 +125,11 @@ class ChatRobotRedis(BasicChatRobot):
             if status_code == requests.codes.ok:
                 if len(r.text) > 0:
                     result = json.loads(res['payload'])
-                    if 'listlength' in result:
-                        self.logger.debug('Engine current list length: ' + str(result['listlength']))
-                        if 'false' == result['listlength'] or not result['listlength']:
+                    if 'listLength' in result:
+                        self.logger.info('Send question {} Engine current list length: {}'.format(chat_data['chat_key'], str(result['listLength'])))
+                        if 'false' == result['listLength'] or result['listLength'] is None:
                             self.logger.warning('Send question action list length error')
                             status_code = -2
-                        return status_code, ''
                     if 'reply' in result:
                         return status_code, result['reply']['text'].strip()
                 else:
@@ -197,6 +197,7 @@ class ChatRobotRedis(BasicChatRobot):
         while len(result) == 0\
                 and (time.time()-query_time) < wait_time:
             result = self.reply()
+            time.sleep(0.05)
 
         if len(result) == 0:
             self.logger.error('{0} get reply time out {1}'.format(self.get_debug_info(), wait_time))

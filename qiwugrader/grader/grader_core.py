@@ -89,7 +89,7 @@ class Grader:
                 question_str = str(question)
             else:
                 question_str = question
-            response = test_service.handle_chat(uid, question_str, login_wait=self.question_interval)
+            response = test_service.handle_chat(uid, question_str, login_wait=0)
             data = None
             response = to_str(response)
             if response.find(AnswerTokenType.QUERY_ATTACH.value) != -1 \
