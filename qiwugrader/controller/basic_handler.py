@@ -79,11 +79,8 @@ class BasicHandler:
             self.active[from_name] = time.time()
 
             # process the message and give a response
-            if msg_id in self.msg:
-                result = self.msg[msg_id]
-            else:
-                result = self.process_chat(from_name, msg, max_wait=max_wait, login_wait=login_wait)
-                self.msg[msg_id] = result
+            result = self.process_chat(from_name, msg, max_wait=max_wait, login_wait=login_wait)
+            self.msg[msg_id] = result
 
             # post chat stuff
             modified_result = self.post_chat(from_name, result)
