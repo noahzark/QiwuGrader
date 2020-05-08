@@ -31,7 +31,7 @@ except NameError:
 class Grader:
 
     ERROR_REPLY = u'服务器通信错误。'.encode('utf-8')
-    TIMEOUT_REPLY = u'请让我再想想。'.encode('utf-8')
+    TIMEOUT_REPLY = u'请让我再想想。'
     REQUEST_TIMEOUT = SingleDialogue.REQUEST_TIMEOUT.encode('utf-8')
     REQUEST_ERROR_REPLY = SingleDialogue.ERROR_REPLY.encode('utf-8')
 
@@ -106,7 +106,7 @@ class Grader:
             process_time = time.time() - process_time
 
             correct = True
-            if response == self.TIMEOUT_REPLY:
+            if response.find(self.TIMEOUT_REPLY) == 0:
                 correct = False
             if response == self.REQUEST_TIMEOUT:
                 correct = False
@@ -114,7 +114,7 @@ class Grader:
                 correct = False
 
             answer_str = 'No answer found for question {0}'.format(i)
-            if answers and i in answers and answers[i]:
+            if correct and answers and i in answers and answers[i]:
                 response = to_str(response)
                 # if data:
                 #     temp_res = response
@@ -140,11 +140,6 @@ class Grader:
                     answer_str = answer.encode('utf-8')
                     if response.find(to_str(answer_str)) != -1:
                         correct = True
-            else:
-                if response == self.ERROR_REPLY:
-                    correct = False
-                if response == self.TIMEOUT_REPLY:
-                    correct = False
 
             if correct:
                 grade += 1
@@ -194,6 +189,7 @@ class Grader:
                 break
 
             if not correct and self.pause_on_error:
+                test_logger.info("Pause thread for 10 seconds due to incorrect response")
                 time.sleep(10)
 
             if self.question_interval > 0.1:
