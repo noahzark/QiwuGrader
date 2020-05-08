@@ -19,6 +19,10 @@ sessions.mount('http://', HTTPAdapter(pool_connections=1024, pool_maxsize=2048))
 
 class ChatRobotRedis(BasicChatRobot):
 
+    CONNECT_TIMEOUT = .5
+    LOGIN_TIMEOUT = 1.5
+    LOGIN_MAX_RETRY = 3
+
     def __init__(self, engine_config, robot_config, bot_username=None):
         super(ChatRobotRedis, self).__init__(engine_config, robot_config, bot_username)
         self.session = sessions
@@ -26,13 +30,11 @@ class ChatRobotRedis(BasicChatRobot):
 
     def _request_engine(self, data, timeout=1):
         try:
-            r = self.session.post(self.to_uri(), json=data, proxies=self.proxy, timeout=timeout)
+            r = self.session.post(self.to_uri(), json=data, proxies=self.proxy, timeout=(self.CONNECT_TIMEOUT, timeout))
             # self.logger.info('<chat_robot_redis> elapsed {} {} {}'.format(data['action'], r.elapsed.total_seconds(), data['chat_key']))
             return r
-        except urllib3.exceptions.ReadTimeoutError as e:
-            self.logger.info('Failed to request ' + str(e))
-        except Exception as e:
-            self.logger.info('Failed to request ' + str(e))
+        except requests.exceptions.ConnectTimeout as e:
+            self.logger.error('<chat_robot_redis> failed to connect node    ', e)
         return None
 
     def _handle_engine_response(self, r, action):
@@ -51,6 +53,7 @@ class ChatRobotRedis(BasicChatRobot):
         return r_json
 
     # login to the chat engine
+    @DeprecationWarning
     def login(self, chat_key):
         chat_key = self.generate_chat_key(chat_key)
 
@@ -86,7 +89,18 @@ class ChatRobotRedis(BasicChatRobot):
             'waiting_time': self.max_wait * 1000,
         }
 
-        r = self._send_request(login_data, self.max_wait)
+        retry = 0
+        r = None
+        while not r and retry < self.MAX_RETRY_TIMES:
+            try:
+                r = self._send_request(login_data, self.LOGIN_TIMEOUT)
+                if r is None:
+                    login_data['chat_key'] = self.generate_chat_key(uid)
+                retry += 1
+            except Exception as e:
+                self.logger.error('Failed to login', e)
+                login_data['chat_key'] = self.generate_chat_key(uid)
+
         res = self._handle_engine_response(r, 'login')
         if res:
             result = json.loads(res['payload'])
@@ -116,7 +130,16 @@ class ChatRobotRedis(BasicChatRobot):
             'format': 'json',
             'waiting_time': max_wait * 1000,
         }
-        r = self._send_request(chat_data, max_wait)
+
+        retry = 0
+        r = None
+        try:
+            while not r and retry < self.MAX_RETRY_TIMES:
+                r = self._send_request(chat_data, max_wait)
+                retry += 1
+        except Exception as e:
+            self.logger.error('Failed to send', e)
+
         res = self._handle_engine_response(r, 'send')
 
         status_code = -1
