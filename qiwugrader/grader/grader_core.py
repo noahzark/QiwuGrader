@@ -42,6 +42,7 @@ class Grader:
 
         self.test_type = 'knowledge'
 
+        self.pause_on_error = False
         self.suspend_on_error = False
 
         self.print_csv = False
@@ -142,6 +143,8 @@ class Grader:
             else:
                 if response == self.ERROR_REPLY:
                     correct = False
+                if response == self.TIMEOUT_REPLY:
+                    correct = False
 
             if correct:
                 grade += 1
@@ -189,6 +192,9 @@ class Grader:
 
             if not correct and self.suspend_on_error:
                 break
+
+            if not correct and self.pause_on_error:
+                time.sleep(10)
 
             if self.question_interval > 0.1:
                 time.sleep(self.question_interval)
@@ -313,9 +319,11 @@ class Grader:
         self.server = config.get_config("server", self.server)
 
         options = config.get_config("options", {
+            'pause_on_error': self.pause_on_error,
             'suspend_on_error': self.suspend_on_error,
             'question_interval': self.question_interval
         })
+        self.pause_on_error = options.get('pause_on_error', self.pause_on_error)
         self.suspend_on_error = options.get('suspend_on_error', self.suspend_on_error)
         self.question_interval = options.get('question_interval', self.question_interval)
 
