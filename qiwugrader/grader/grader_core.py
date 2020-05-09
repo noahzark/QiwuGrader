@@ -4,6 +4,7 @@ import re
 import json
 import os
 import xlrd
+import random
 
 from qiwugrader.controller.config_file_handler import YamlConfigFileHandler
 from qiwugrader.controller.private_msg_handler import pMsgHandler
@@ -41,6 +42,8 @@ class Grader:
         self.server = None
 
         self.test_type = 'knowledge'
+
+        self.shuffle_session = False
 
         self.pause_on_error = False
         self.suspend_on_error = False
@@ -201,6 +204,43 @@ class Grader:
         report_logger.info("{0} grade: {1} / {2}\ntime: {3} avg: {4}".format(name, grade, len(questions), total_time, total_time/len(questions)))
         return grade == len(questions) and True or False, total_time
 
+    def shuffle_sessions(self):
+        temp_map = {}
+        for i in range(1, len(self.questions) + 1):
+            session_question_answer = temp_map.get(self.sessions[i], [])
+            if i in self.answers:
+                session_question_answer.append({
+                    'session': self.sessions[i],
+                    'question': self.questions[i],
+                    'answer': self.answers[i]
+                })
+            else:
+                session_question_answer.append({
+                    'session': self.sessions[i],
+                    'question': self.questions[i]
+                })
+            temp_map[self.sessions[i]] = session_question_answer
+
+        temp_map_keys = []
+        for temp_map_key in temp_map.keys():
+            temp_map_keys.append(temp_map_key)
+
+        random.shuffle(temp_map_keys)
+
+        self.sessions = {}
+        self.questions = {}
+        self.answers = {}
+
+        session_count = 0
+        for temp_map_key in temp_map_keys:
+            temp_session = temp_map[temp_map_key]
+            for session in temp_session:
+                self.sessions[session_count] = session['session']
+                self.questions[session_count] = session['question']
+                if 'answer' in temp_map:
+                    self.answers[session_count] = session['answer']
+                session_count += 1
+
     def init_xlsx(self, input_file):
         workbook = xlrd.open_workbook(input_file)
         worksheet = workbook.sheet_by_name(workbook.sheet_names()[0])
@@ -315,10 +355,12 @@ class Grader:
         self.server = config.get_config("server", self.server)
 
         options = config.get_config("options", {
+            'shuffle_session': self.shuffle_session,
             'pause_on_error': self.pause_on_error,
             'suspend_on_error': self.suspend_on_error,
             'question_interval': self.question_interval
         })
+        self.shuffle_session = options.get('shuffle_session', self.shuffle_session)
         self.pause_on_error = options.get('pause_on_error', self.pause_on_error)
         self.suspend_on_error = options.get('suspend_on_error', self.suspend_on_error)
         self.question_interval = options.get('question_interval', self.question_interval)
@@ -349,6 +391,9 @@ class Grader:
         else:
             self.questions = config.get_config("questions", self.questions)
             self.answers = config.get_config("answers", self.answers)
+
+        if self.shuffle_session:
+            self.shuffle_sessions()
 
         configuration = config.get_config("output", {
             'print_info': self.print_info,

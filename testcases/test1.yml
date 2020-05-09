@@ -27,6 +27,8 @@ server:
 options:
   question_interval: 2 # 提问间隔，默认为 0
   suspend_on_error: false  # 错误中断，默认为 false
+  shuffle_session: false # 每个并发随机打乱问句，默认为 false
+  pause_on_error: false # 发生错误时暂停10秒该线程（并发），默认为 false
 
 # 【可选参数】 输出设置，默认全为 true
 output:
