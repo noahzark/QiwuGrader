@@ -61,7 +61,8 @@ setup(
     # 新建终端命令并链接到模块函数
     entry_points={'console_scripts': [
         'qiwugrader = qiwugrader:main',
-        'qiwugrader.compare = qiwugrader:compare'
+        'qiwugrader.compare = qiwugrader:compare',
+        'qiwugrader.generate = qiwugrader:generate',
     ]},
     # 项目相关的额外链接
     project_urls={
