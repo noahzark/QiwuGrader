@@ -20,6 +20,7 @@ class SingleDialogueHandler(BasicHandler):
         self.id = 'Single-' + service_config.get_config('name')
         self.handler = SingleDialogue(service_config)
         self.set_replacement(service_config.get_config('post-replacement'))
+        self.app_key = 'qiwu-grader'
 
     def pre_chat(self, from_name, msg):
         if super(SingleDialogueHandler, self).pre_chat(from_name, msg):
@@ -35,7 +36,7 @@ class SingleDialogueHandler(BasicHandler):
         data = {
             'uid': to_str(from_name.encode('utf-8')),
             'msg': to_str(msg.encode('utf-8')),
-            'appkey': 'qiwu-grader',
+            'appkey': self.app_key,
             'nickname': 'tester',
             'new_session': 'false',
             'max_wait': '20'
