@@ -53,7 +53,6 @@ class ChatRobotRedis(BasicChatRobot):
         return r_json
 
     # login to the chat engine
-    @DeprecationWarning
     def login(self, chat_key):
         chat_key = self.generate_chat_key(chat_key)
 
